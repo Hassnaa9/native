@@ -1,6 +1,17 @@
 name: swift2objc
 
 on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - release
+          - debug
   # Run on PRs and pushes to the default branch.
   push:
     branches: [main]
