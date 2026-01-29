@@ -24,4 +24,4 @@ jobs:
 
       - name: Run integration test with regen
         run: |
-          dart test integration/integration_test.dart -- --regen
+          dart test native/pkgs/swift2objc/integration/integration_test.dart -- --regen
