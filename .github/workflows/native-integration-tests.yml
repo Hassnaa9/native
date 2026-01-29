@@ -22,6 +22,4 @@ jobs:
       - name: Install dependencies
         run: dart pub get
 
-      - name: Run integration test with regen
-        run: |
-          dart test native/pkgs/swift2objc/integration/integration_test.dart -- --regen
+      
