@@ -1,0 +1,27 @@
+name: Native integration tests (regen)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  macos-test:
+    runs-on: macos-14
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Verify Dart
+        run: dart --version
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Run integration test with regen
+        run: |
+          dart test integration/integration_test.dart --regen
