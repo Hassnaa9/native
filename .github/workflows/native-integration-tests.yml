@@ -24,4 +24,4 @@ jobs:
 
       - name: Run integration test with regen
         run: |
-          dart test integration/integration_test.dart --regen
+          dart test integration/integration_test.dart -- --regen
