@@ -68,6 +68,9 @@ jobs:
           sdk: stable
       - name: Install dependencies
         run: dart pub get
+      - name: Conditional Regeneration
+        if: github.event.inputs.build_type == 'release'
+        run: dart test/integration/integration_test.dart --regen
       - name: Install coverage
         run: dart pub global activate coverage
       - name: Run VM tests and collect coverage
