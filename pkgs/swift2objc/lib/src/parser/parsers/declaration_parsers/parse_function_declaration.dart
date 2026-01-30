@@ -108,11 +108,9 @@ ParsedFunctionInfo parseFunctionInfo(
   final prefixAnnotations = <String>{};
 
   while (true) {
-    if (tokens.isNotEmpty) {
-      final spelling = tokens[0]['spelling'].get<String>();
-      if (spelling.contains('(')) {
-        break;
-      }
+    if (tokens.isNotEmpty &&
+        tokens[0]['spelling'].get<String>().contains('(')) {
+      break;
     }
 
     final keyword = maybeConsume('keyword');
@@ -129,9 +127,7 @@ ParsedFunctionInfo parseFunctionInfo(
       if (text != '' && text != ' ' && !text.contains('(')) {
         throw malformedInitializerException;
       }
-      if (text.contains('(')) {
-        break;
-      }
+      if (text.contains('(')) break;
       continue;
     }
 
@@ -154,6 +150,9 @@ ParsedFunctionInfo parseFunctionInfo(
   final openParen = tokens.indexWhere(
     (tok) => tok['spelling'].get<String>().contains('('),
   );
+  if (openParen != -1) {
+    tokens = tokens.slice(openParen + 1);
+  }
   if (openParen != -1) {
     tokens = tokens.slice(openParen + 1);
 
