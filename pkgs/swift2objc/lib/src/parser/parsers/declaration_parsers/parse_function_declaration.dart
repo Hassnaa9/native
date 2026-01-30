@@ -107,45 +107,31 @@ ParsedFunctionInfo parseFunctionInfo(
 
   final prefixAnnotations = <String>{};
 
-while (true) {
-    // 1. If we see the opening parenthesis, we have reached the parameters. Stop.
-    if (tokens.isNotEmpty && matchFragment(tokens[0], 'text', '(')) {
-      break;
-    }
-
-    // 2. Try to consume a keyword (static, func, etc.)
+  while (true) {
     final keyword = maybeConsume('keyword');
     if (keyword != null) {
       if (keyword == 'func' || keyword == 'init' || keyword == 'case') {
-        // We found the declaration marker, but we keep going to skip 
-        // the function name/operator that follows.
-        continue; 
+        break;
       } else {
         prefixAnnotations.add(keyword);
-        continue;
       }
-    }
-
-    // 3. Consume text (whitespace). If it's actual text that isn't empty, 
-    // it's an error.
-    final text = maybeConsume('text');
-    if (text != null) {
-      if (text != '' && text != ' ') {
-         // Allow spaces and empty strings, but throw on unexpected text
-         // that doesn't match '(' handled above.
-         throw malformedInitializerException;
-      }
-      continue;
-    }
-
-    // 4. If it's not a keyword and not text, it's the operator/identifier name (e.g., '+').
-    // We skip it and continue until we hit '(' or run out of tokens.
-    if (tokens.isNotEmpty) {
-      tokens = tokens.slice(1);
     } else {
-      break;
+      // Look ahead: if the next token is the start of parameters '(',
+      // we must stop looking for keywords/annotations.
+      if (tokens.isNotEmpty && matchFragment(tokens[0], 'text', '(')) {
+        break;
+      }
+
+      final text = maybeConsume('text');
+      if (text == null) {
+        // This is the fix for operators: if it's not a keyword and not text,
+        // it's the function name/operator (like '+'). We break to let the
+        // openParen logic below find the '(' parenthesis.
+        break;
+      } else if (text != '' && text != ' ') {
+        throw malformedInitializerException;
+      }
     }
-  }
   }
 
   final openParen = tokens.indexWhere((tok) => matchFragment(tok, 'text', '('));
