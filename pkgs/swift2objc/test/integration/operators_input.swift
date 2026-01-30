@@ -1,6 +1,5 @@
 infix operator ***: MultiplicationPrecedence
 
-
 public class Vec2 {
     public var x: Double
     public var y: Double

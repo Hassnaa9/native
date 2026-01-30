@@ -1,34 +1,14 @@
-// Test preamble text
+@interface Vec2 : NSObject
 
-import Foundation
+@property (nonatomic, assign) double x;
+@property (nonatomic, assign) double y;
 
-@objc public class Vec2Wrapper: NSObject {
-  var wrappedInstance: Vec2
+- (instancetype)initWithX:(double)x y:(double)y;
 
-  @objc public var x: Double {
-    get {
-      wrappedInstance.x
-    }
-    set {
-      wrappedInstance.x = newValue
-    }
-  }
++ (Vec2 *)plus:(Vec2 *)lhs rhs:(Vec2 *)rhs;
 
-  @objc public var y: Double {
-    get {
-      wrappedInstance.y
-    }
-    set {
-      wrappedInstance.y = newValue
-    }
-  }
++ (BOOL)equalequal:(Vec2 *)lhs rhs:(Vec2 *)rhs;
 
-  init(_ wrappedInstance: Vec2) {
-    self.wrappedInstance = wrappedInstance
-  }
++ (double)multiplymultiplymultiply:(Vec2 *)lhs rhs:(Vec2 *)rhs;
 
-  @objc public init(x: Double, y: Double) {
-    wrappedInstance = Vec2(x: x, y: y)
-  }
-
-}
+@end
