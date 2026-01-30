@@ -116,7 +116,10 @@ ParsedFunctionInfo parseFunctionInfo(
         prefixAnnotations.add(keyword);
       }
     } else {
-      if (maybeConsume('text') != '') {
+      final text = maybeConsume('text');
+      if (text == null) {
+        break;
+      } else if (text != '') {
         throw malformedInitializerException;
       }
     }
