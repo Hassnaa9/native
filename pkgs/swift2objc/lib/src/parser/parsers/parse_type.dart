@@ -2,7 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import '../../ast/_core/interfaces/declaration.dart';
 import '../../ast/_core/shared/referred_type.dart';
 import '../../ast/declarations/built_in/built_in_declaration.dart';
 import '../../context.dart';
@@ -99,7 +98,14 @@ typedef PrefixParselet =
   Json token,
   TokenList fragments,
 ) {
-  final id = token['preciseIdentifier'].get<String>();
+  final id = token['preciseIdentifier'].get<String?>();
+
+  //Case: no preciseIdentifier (enum operators, etc.)
+  if (id == null) {
+    final name = token['spelling'].get<String>();
+    return (GenericType(id: name, name: name), fragments);
+  }
+
   final symbol = symbolgraph.symbols[id];
 
   if (symbol == null) {
@@ -108,8 +114,8 @@ typedef PrefixParselet =
     );
   }
 
-  final type = parseDeclaration(context, symbol, symbolgraph).asDeclaredType;
-  return (type, fragments);
+  final declaration = parseDeclaration(context, symbol, symbolgraph);
+  return (DeclaredType(id: id, declaration: declaration), fragments);
 }
 
 (ReferredType, TokenList) _tupleParselet(

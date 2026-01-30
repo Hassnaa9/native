@@ -49,15 +49,25 @@ String? getSpellingForKind(Json fragment, String kind) =>
 bool matchFragment(Json fragment, String kind, String spelling) =>
     getSpellingForKind(fragment, kind) == spelling;
 
+/// FIX:`precise` may be null (e.g. enum operators like `!=`)
 String parseSymbolId(Json symbolJson) {
-  final idJson = symbolJson['identifier']['precise'];
-  final id = idJson.get<String>();
-  assert(
-    !id.contains(idDelim),
-    'Symbold id at path ${idJson.path} contains a hiphen "$idDelim" '
-    'which is not expected',
-  );
-  return id;
+  final preciseJson = symbolJson['identifier']['precise'];
+
+  final preciseId = preciseJson.exists ? preciseJson.get<String?>() : null;
+
+  if (preciseId != null) {
+    assert(
+      !preciseId.contains(idDelim),
+      'Symbol id at path ${preciseJson.path} '
+      'contains a hiphen "$idDelim" which is not expected',
+    );
+
+    return preciseId;
+  }
+
+  return symbolJson['declarationFragments']
+      .firstJsonWhereKey('kind', 'identifier')['spelling']
+      .get<String>();
 }
 
 String parseSymbolName(Json symbolJson) => symbolJson['declarationFragments']

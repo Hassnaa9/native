@@ -105,6 +105,11 @@ ParsedFunctionInfo parseFunctionInfo(
     return spelling;
   }
 
+  final isOperatorFunction = declarationFragments
+      .where((f) => f['kind'].get<String?>() == 'identifier')
+      .map((f) => f['spelling'].get<String>())
+      .any((s) => RegExp(r'\w').hasMatch(s));
+
   final prefixAnnotations = <String>{};
 
   while (true) {
@@ -126,40 +131,44 @@ ParsedFunctionInfo parseFunctionInfo(
   if (openParen != -1) {
     tokens = tokens.slice(openParen + 1);
 
-    // Parse parameters until we find a ')'.
-    if (maybeConsume('text') == ')') {
-      // Empty param list.
-    } else {
+    if (maybeConsume('text') != ')') {
       while (true) {
-        final externalParam = maybeConsume('externalParam');
+        var name = '';
         String? internalParam;
+
+        final externalParam = maybeConsume('externalParam');
         if (externalParam != null) {
+          name = externalParam;
           var sep = maybeConsume('text');
           if (sep == '') {
             internalParam = maybeConsume('internalParam');
-            if (internalParam == null) {
-              throw malformedInitializerException;
-            }
             sep = maybeConsume('text');
           }
 
           if (sep != ':') {
             throw malformedInitializerException;
           }
-        } else if (!isEnumCase) {
-          // Enum cases are allowed to omit both param names. Other param lists
-          // must at least specify the external name.
+        } else if (isOperatorFunction) {
+          internalParam = maybeConsume('internalParam');
+          if (internalParam == null) throw malformedInitializerException;
+          if (maybeConsume('text') != ':') throw malformedInitializerException;
+        } else if (isEnumCase) {
+          // Enum associated value without labels
+          final (type, rest) = parseType(context, symbolgraph, tokens);
+          tokens = rest;
+          parameters.add(Parameter(name: '', internalName: null, type: type));
+          final end = maybeConsume('text');
+          if (end == ')') break;
+          if (end != ',') throw malformedInitializerException;
+          continue;
+        } else {
           throw malformedInitializerException;
         }
         final (type, remainingTokens) = parseType(context, symbolgraph, tokens);
         tokens = remainingTokens;
 
         parameters.add(
-          Parameter(
-            name: externalParam ?? '',
-            internalName: internalParam,
-            type: type,
-          ),
+          Parameter(name: name, internalName: internalParam, type: type),
         );
 
         final end = maybeConsume('text');
