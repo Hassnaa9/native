@@ -152,9 +152,6 @@ ParsedFunctionInfo parseFunctionInfo(
   );
   if (openParen != -1) {
     tokens = tokens.slice(openParen + 1);
-  }
-  if (openParen != -1) {
-    tokens = tokens.slice(openParen + 1);
 
     // Parse parameters until we find a ')'.
     if (maybeConsume('text') == ')') {
