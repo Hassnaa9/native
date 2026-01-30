@@ -173,7 +173,9 @@ List<String> _generateStatements(
     originalMethodCall = 'try $originalMethodCall';
   }
 
-  if (originalFunction.returnType is OptionalType) {
+  // Use 'if let' pattern ONLY for initializers that return optional types.
+  if (originalFunction.returnType is OptionalType &&
+      originalFunction.name == 'init') {
     return [
       'if let instance = $originalMethodCall {',
       '  wrappedInstance = instance',
@@ -183,6 +185,7 @@ List<String> _generateStatements(
     ];
   }
 
+  // return the original call directly.
   if (originalFunction.returnType.sameAs(transformedMethod.returnType)) {
     return ['return $originalMethodCall'];
   }

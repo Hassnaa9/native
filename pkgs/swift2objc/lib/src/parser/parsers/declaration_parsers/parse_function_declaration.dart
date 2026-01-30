@@ -99,7 +99,7 @@ ParsedFunctionInfo parseFunctionInfo(
     final keyword = maybeConsume('keyword');
     if (keyword != null) {
       if (keyword == 'func' || keyword == 'init' || keyword == 'case') {
-        break;
+        continue;
       }
       prefixAnnotations.add(keyword);
       continue;
@@ -111,11 +111,13 @@ ParsedFunctionInfo parseFunctionInfo(
   final openParen = tokens.indexWhere(
     (tok) => tok['spelling'].get<String>().contains('('),
   );
+
   if (openParen != -1) {
     tokens = tokens.slice(openParen + 1);
 
     final firstText = maybeConsume('text');
     if (firstText != null && firstText.contains(')')) {
+      // Empty param list.
     } else {
       while (true) {
         final externalParam = maybeConsume('externalParam');
@@ -134,7 +136,10 @@ ParsedFunctionInfo parseFunctionInfo(
             throw malformedInitializerException;
           }
         } else if (!isEnumCase) {
-          throw malformedInitializerException;
+          if (tokens.isEmpty ||
+              tokens[0]['spelling'].get<String>().contains(')')) {
+            break;
+          }
         }
         final (type, remainingTokens) = parseType(context, symbolgraph, tokens);
         tokens = remainingTokens;
