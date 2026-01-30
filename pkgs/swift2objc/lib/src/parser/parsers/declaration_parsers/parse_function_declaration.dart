@@ -108,8 +108,11 @@ ParsedFunctionInfo parseFunctionInfo(
   final prefixAnnotations = <String>{};
 
   while (true) {
-    if (tokens.isNotEmpty && matchFragment(tokens[0], 'text', '(')) {
-      break;
+    if (tokens.isNotEmpty) {
+      final spelling = tokens[0]['spelling'].get<String>();
+      if (spelling.contains('(')) {
+        break;
+      }
     }
 
     final keyword = maybeConsume('keyword');
@@ -123,8 +126,11 @@ ParsedFunctionInfo parseFunctionInfo(
 
     final text = maybeConsume('text');
     if (text != null) {
-      if (text != '' && text != ' ') {
+      if (text != '' && text != ' ' && !text.contains('(')) {
         throw malformedInitializerException;
+      }
+      if (text.contains('(')) {
+        break;
       }
       continue;
     }
@@ -137,7 +143,8 @@ ParsedFunctionInfo parseFunctionInfo(
       }
     }
 
-    if (tokens.isNotEmpty && !matchFragment(tokens[0], 'text', '(')) {
+    if (tokens.isNotEmpty &&
+        !tokens[0]['spelling'].get<String>().contains('(')) {
       throw malformedInitializerException;
     } else {
       break;
