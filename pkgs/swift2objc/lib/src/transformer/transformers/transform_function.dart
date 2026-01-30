@@ -34,7 +34,6 @@ MethodDeclaration? transformMethod(
     originalMethod,
     globalNamer,
     state,
-    wrapperMethodName: globalNamer.makeUnique(originalMethod.name),
     originalCallStatementGenerator: (arguments) {
       final methodSource = originalMethod.isStatic
           ? wrappedClassInstance.type.swiftType
