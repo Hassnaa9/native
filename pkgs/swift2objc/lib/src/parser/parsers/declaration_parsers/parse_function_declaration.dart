@@ -108,29 +108,31 @@ ParsedFunctionInfo parseFunctionInfo(
   final prefixAnnotations = <String>{};
 
   while (true) {
+    if (tokens.isNotEmpty && matchFragment(tokens[0], 'text', '(')) {
+      break;
+    }
+
     final keyword = maybeConsume('keyword');
     if (keyword != null) {
       if (keyword == 'func' || keyword == 'init' || keyword == 'case') {
-        break;
-      } else {
-        prefixAnnotations.add(keyword);
+        continue;
       }
-    } else {
-      // Look ahead: if the next token is the start of parameters '(',
-      // we must stop looking for keywords/annotations.
-      if (tokens.isNotEmpty && matchFragment(tokens[0], 'text', '(')) {
-        break;
-      }
+      prefixAnnotations.add(keyword);
+      continue;
+    }
 
-      final text = maybeConsume('text');
-      if (text == null) {
-        // This is the fix for operators: if it's not a keyword and not text,
-        // it's the function name/operator (like '+'). We break to let the
-        // openParen logic below find the '(' parenthesis.
-        break;
-      } else if (text != '' && text != ' ') {
+    final text = maybeConsume('text');
+    if (text != null) {
+      if (text != '' && text != ' ') {
         throw malformedInitializerException;
       }
+      continue;
+    }
+
+    if (tokens.isNotEmpty) {
+      tokens = tokens.slice(1);
+    } else {
+      break;
     }
   }
 
