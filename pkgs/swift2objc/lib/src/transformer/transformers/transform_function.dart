@@ -14,12 +14,6 @@ import '../transform.dart';
 import 'const.dart';
 import 'transform_referred_type.dart';
 
-// The main difference between generating a wrapper method for a global function
-// and a compound method is the way the original function/method is referenced.
-// In compound method case, the original method is referenced through the
-// wrapped class instance in the wrapper class. In global function case,
-// it can be referenced directly since it's not a member of any entity.
-
 MethodDeclaration? transformMethod(
   MethodDeclaration originalMethod,
   PropertyDeclaration wrappedClassInstance,
@@ -58,8 +52,6 @@ MethodDeclaration transformGlobalFunction(
         '${globalFunction.name}($arguments)',
   );
 }
-
-// -------------------------- Core Implementation --------------------------
 
 Parameter _transformParam(
   int index,
@@ -179,6 +171,16 @@ List<String> _generateStatements(
   }
   if (transformedMethod.throws) {
     originalMethodCall = 'try $originalMethodCall';
+  }
+
+  if (originalFunction.returnType is OptionalType) {
+    return [
+      'if let instance = $originalMethodCall {',
+      '  wrappedInstance = instance',
+      '} else {',
+      '  return nil',
+      '}',
+    ];
   }
 
   if (originalFunction.returnType.sameAs(transformedMethod.returnType)) {
