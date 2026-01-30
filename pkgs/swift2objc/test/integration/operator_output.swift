@@ -6,13 +6,21 @@ import Foundation
   var wrappedInstance: Vec2
 
   @objc public var x: Double {
-    get { wrappedInstance.x }
-    set { wrappedInstance.x = newValue }
+    get {
+      wrappedInstance.x
+    }
+    set {
+      wrappedInstance.x = newValue
+    }
   }
 
   @objc public var y: Double {
-    get { wrappedInstance.y }
-    set { wrappedInstance.y = newValue }
+    get {
+      wrappedInstance.y
+    }
+    set {
+      wrappedInstance.y = newValue
+    }
   }
 
   init(_ wrappedInstance: Vec2) {
@@ -23,6 +31,7 @@ import Foundation
     wrappedInstance = Vec2(x: x, y: y)
   }
 
+  // MARK: - Operators wrappers
 
   @objc public static func add(
     _ lhs: Vec2Wrapper,
