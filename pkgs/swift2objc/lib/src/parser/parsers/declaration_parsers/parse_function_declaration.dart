@@ -116,13 +116,14 @@ ParsedFunctionInfo parseFunctionInfo(
         prefixAnnotations.add(keyword);
       }
     } else {
-      final text = maybeConsume('text');
-      if (text == null) {
-        break;
-      } else if (text != '') {
+      if (maybeConsume('text') != '') {
         throw malformedInitializerException;
       }
     }
+  }
+  if (isEnumCase) {
+    maybeConsume('text'); 
+    maybeConsume('identifier'); 
   }
 
   final openParen = tokens.indexWhere((tok) => matchFragment(tok, 'text', '('));
