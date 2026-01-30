@@ -107,44 +107,21 @@ ParsedFunctionInfo parseFunctionInfo(
 
   final prefixAnnotations = <String>{};
 
-  while (true) {
-    if (tokens.isNotEmpty &&
-        tokens[0]['spelling'].get<String>().contains('(')) {
+  while (tokens.isNotEmpty) {
+    if (tokens[0]['spelling'].get<String>().contains('(')) {
       break;
     }
 
     final keyword = maybeConsume('keyword');
     if (keyword != null) {
       if (keyword == 'func' || keyword == 'init' || keyword == 'case') {
-        continue;
+        break;
       }
       prefixAnnotations.add(keyword);
       continue;
     }
 
-    final text = maybeConsume('text');
-    if (text != null) {
-      if (text != '' && text != ' ' && !text.contains('(')) {
-        throw malformedInitializerException;
-      }
-      if (text.contains('(')) break;
-      continue;
-    }
-
-    if (tokens.isNotEmpty) {
-      final kind = tokens[0]['kind'].get<String>();
-      if (kind == 'identifier' || kind == 'operator') {
-        tokens = tokens.slice(1);
-        continue;
-      }
-    }
-
-    if (tokens.isNotEmpty &&
-        !tokens[0]['spelling'].get<String>().contains('(')) {
-      throw malformedInitializerException;
-    } else {
-      break;
-    }
+    tokens = tokens.slice(1);
   }
 
   final openParen = tokens.indexWhere(
