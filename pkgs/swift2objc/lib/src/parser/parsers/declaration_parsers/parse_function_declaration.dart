@@ -122,8 +122,8 @@ ParsedFunctionInfo parseFunctionInfo(
     }
   }
   if (isEnumCase) {
-    maybeConsume('text'); 
-    maybeConsume('identifier'); 
+    maybeConsume('text');
+    maybeConsume('identifier');
   }
 
   final openParen = tokens.indexWhere((tok) => matchFragment(tok, 'text', '('));
