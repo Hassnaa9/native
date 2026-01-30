@@ -151,7 +151,9 @@ ParsedFunctionInfo parseFunctionInfo(
     }
   }
 
-  final openParen = tokens.indexWhere((tok) => matchFragment(tok, 'text', '('));
+  final openParen = tokens.indexWhere(
+    (tok) => tok['spelling'].get<String>().contains('('),
+  );
   if (openParen != -1) {
     tokens = tokens.slice(openParen + 1);
 
