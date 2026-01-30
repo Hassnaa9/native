@@ -130,7 +130,15 @@ ParsedFunctionInfo parseFunctionInfo(
     }
 
     if (tokens.isNotEmpty) {
-      tokens = tokens.slice(1);
+      final kind = tokens[0]['kind'].get<String>();
+      if (kind == 'identifier' || kind == 'operator') {
+        tokens = tokens.slice(1);
+        continue;
+      }
+    }
+
+    if (tokens.isNotEmpty && !matchFragment(tokens[0], 'text', '(')) {
+      throw malformedInitializerException;
     } else {
       break;
     }
