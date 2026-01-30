@@ -1,6 +1,7 @@
 name: swift2objc
 
 on:
+  workflow_dispatch: # allows manual runs
   # Run on PRs and pushes to the default branch.
   push:
     branches: [main]
