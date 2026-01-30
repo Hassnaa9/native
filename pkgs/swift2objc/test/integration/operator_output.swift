@@ -1,14 +1,47 @@
-@interface Vec2 : NSObject
+// Test preamble text
 
-@property (nonatomic, assign) double x;
-@property (nonatomic, assign) double y;
+import Foundation
 
-- (instancetype)initWithX:(double)x y:(double)y;
+@objc public class Vec2Wrapper: NSObject {
+  var wrappedInstance: Vec2
 
-+ (Vec2 *)add:(Vec2 *)lhs rhs:(Vec2 *)rhs;
+  @objc public var x: Double {
+    get { wrappedInstance.x }
+    set { wrappedInstance.x = newValue }
+  }
 
-+ (BOOL)equals:(Vec2 *)lhs rhs:(Vec2 *)rhs;
+  @objc public var y: Double {
+    get { wrappedInstance.y }
+    set { wrappedInstance.y = newValue }
+  }
 
-+ (double)operator:(Vec2 *)lhs rhs:(Vec2 *)rhs;
+  init(_ wrappedInstance: Vec2) {
+    self.wrappedInstance = wrappedInstance
+  }
 
-@end
+  @objc public init(x: Double, y: Double) {
+    wrappedInstance = Vec2(x: x, y: y)
+  }
+
+
+  @objc public static func add(
+    _ lhs: Vec2Wrapper,
+    rhs: Vec2Wrapper
+  ) -> Vec2Wrapper {
+    return Vec2Wrapper(lhs.wrappedInstance + rhs.wrappedInstance)
+  }
+
+  @objc public static func equals(
+    _ lhs: Vec2Wrapper,
+    rhs: Vec2Wrapper
+  ) -> Bool {
+    return lhs.wrappedInstance == rhs.wrappedInstance
+  }
+
+  @objc public static func dot(
+    _ lhs: Vec2Wrapper,
+    rhs: Vec2Wrapper
+  ) -> Double {
+    return lhs.wrappedInstance *** rhs.wrappedInstance
+  }
+}
