@@ -68,6 +68,52 @@ typedef ParsedFunctionInfo = ({
   bool mutating,
 });
 
+bool _isSwiftOperator(String text) {
+  const commonOps = {
+    '+',
+    '-',
+    '*',
+    '/',
+    '%',
+    '==',
+    '!=',
+    '<',
+    '>',
+    '<=',
+    '>=',
+    '===',
+    '!==',
+    '!',
+    '&&',
+    '||',
+    '&',
+    '|',
+    '^',
+    '~',
+    '<<',
+    '>>',
+    '=',
+    '+=',
+    '-=',
+    '*=',
+    '/=',
+    '%=',
+    '&=',
+    '|=',
+    '^=',
+    '<<=',
+    '>>=',
+    '??',
+    '?',
+    '...',
+    '..<',
+  };
+
+  if (commonOps.contains(text)) return true;
+
+  return RegExp(r'^[/=\-+!*%<>&|^~?]+$').hasMatch(text);
+}
+
 ParsedFunctionInfo parseFunctionInfo(
   Context context,
   Json declarationFragments,
@@ -111,6 +157,21 @@ ParsedFunctionInfo parseFunctionInfo(
     final keyword = maybeConsume('keyword');
     if (keyword != null) {
       if (keyword == 'func' || keyword == 'init' || keyword == 'case') {
+        if (keyword == 'func') {
+          maybeConsume('text');
+
+          if (tokens.isNotEmpty) {
+            final operatorSpelling = getSpellingForKind(
+              tokens[0],
+              'identifier',
+            );
+            if (operatorSpelling != null &&
+                _isSwiftOperator(operatorSpelling)) {
+              maybeConsume('identifier');
+              maybeConsume('text');
+            }
+          }
+        }
         break;
       } else {
         prefixAnnotations.add(keyword);

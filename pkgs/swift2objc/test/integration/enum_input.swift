@@ -31,11 +31,11 @@ public enum Barcode {
 }
 
 // Indirect (recursive) enums.
-public indirect enum ArithmeticExpression {
-    case number(Int)
-    case addition(ArithmeticExpression, ArithmeticExpression)
-    case multiplication(ArithmeticExpression, ArithmeticExpression)
-}
+// public indirect enum ArithmeticExpression {
+//     case number(Int)
+//     case addition(ArithmeticExpression, ArithmeticExpression)
+//     case multiplication(ArithmeticExpression, ArithmeticExpression)
+// }
 
 // CaseIterable enums.
 public enum Beverage: CaseIterable {
