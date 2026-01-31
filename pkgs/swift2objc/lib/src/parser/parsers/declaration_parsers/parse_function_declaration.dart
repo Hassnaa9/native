@@ -120,22 +120,6 @@ ParsedFunctionInfo parseFunctionInfo(
   ParsedSymbolgraph symbolgraph, {
   bool isEnumCase = false,
 }) {
-  // `declarationFragments` describes each part of the function declaration,
-  // things like the `func` keyword, brackets, spaces, etc.
-  // For the most part, We only care about the parameter fragments and
-  // annotations here, and they always appear in this order:
-  // [
-  //   ..., '(',
-  //   externalParam, ' ', internalParam, ': ', type..., ', '
-  //   externalParam, ': ', type..., ', '
-  //   externalParam, ' ', internalParam, ': ', type..., ')'
-  //   annotations..., '->', returnType...
-  // ]
-  // Note: `internalParam` may or may not exist.
-  //
-  // The following loop attempts to extract parameters from this flat array
-  // while making sure the parameter fragments have the expected order.
-
   final parameters = <Parameter>[];
   final malformedInitializerException = Exception(
     'Malformed parameter list at ${declarationFragments.path}: '
@@ -152,6 +136,7 @@ ParsedFunctionInfo parseFunctionInfo(
   }
 
   final prefixAnnotations = <String>{};
+  var isOperator = false;
 
   while (true) {
     final keyword = maybeConsume('keyword');
@@ -167,6 +152,7 @@ ParsedFunctionInfo parseFunctionInfo(
             );
             if (operatorSpelling != null &&
                 _isSwiftOperator(operatorSpelling)) {
+              isOperator = true;
               maybeConsume('identifier');
               maybeConsume('text');
             }
@@ -187,9 +173,7 @@ ParsedFunctionInfo parseFunctionInfo(
   if (openParen != -1) {
     tokens = tokens.slice(openParen + 1);
 
-    // Parse parameters until we find a ')'.
     if (maybeConsume('text') == ')') {
-      // Empty param list.
     } else {
       while (true) {
         final externalParam = maybeConsume('externalParam');
@@ -207,9 +191,15 @@ ParsedFunctionInfo parseFunctionInfo(
           if (sep != ':') {
             throw malformedInitializerException;
           }
+        } else if (isOperator) {
+          internalParam = maybeConsume('internalParam');
+          if (internalParam == null) {
+            throw malformedInitializerException;
+          }
+          if (maybeConsume('text') != ':') {
+            throw malformedInitializerException;
+          }
         } else if (!isEnumCase) {
-          // Enum cases are allowed to omit both param names. Other param lists
-          // must at least specify the external name.
           throw malformedInitializerException;
         }
         final (type, remainingTokens) = parseType(context, symbolgraph, tokens);
@@ -217,7 +207,7 @@ ParsedFunctionInfo parseFunctionInfo(
 
         parameters.add(
           Parameter(
-            name: externalParam ?? '',
+            name: externalParam ?? internalParam ?? '',
             internalName: internalParam,
             type: type,
           ),
@@ -232,8 +222,6 @@ ParsedFunctionInfo parseFunctionInfo(
     }
   }
 
-  // Parse annotations until we run out. The annotations are keywords separated
-  // by whitespace tokens.
   final annotations = <String>{};
   while (true) {
     final keyword = maybeConsume('keyword');
