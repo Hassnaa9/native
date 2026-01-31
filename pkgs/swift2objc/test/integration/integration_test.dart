@@ -54,7 +54,7 @@ void main([List<String>? args]) {
 
   group('Integration tests', () {
     for (final name in testNames) {
-      if (name != 'enum') continue; // TEMPORARY: run only enum test
+      // if (name != 'enum') continue; // TEMPORARY: run only enum test
       test(name, () async {
         loggedErrors = 0;
         final inputFile = path.join(thisDir, '$name$inputSuffix');
@@ -81,7 +81,7 @@ void main([List<String>? args]) {
         expect(actualOutput, expectedOutput);
         expect(loggedErrors, 0);
 
-        // await expectValidSwift([inputFile, actualOutputFile]);
+        await expectValidSwift([inputFile, actualOutputFile]);
       }, timeout: const Timeout(Duration(minutes: 2)));
     }
   });

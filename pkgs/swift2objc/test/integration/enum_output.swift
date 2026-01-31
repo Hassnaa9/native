@@ -33,6 +33,10 @@ import Foundation
     self.wrappedInstance = wrappedInstance
   }
 
+  @objc static public func !=(lhs lhs: Void, rhs rhs: Void) -> Bool {
+    return CompassPoint.!=(lhs: lhs, rhs: rhs)
+  }
+
 }
 
 @objc public class TrafficLightWrapper: NSObject {
@@ -76,6 +80,10 @@ import Foundation
 
   @objc public func advance() {
     return wrappedInstance.advance()
+  }
+
+  @objc static public func !=(lhs lhs: Void, rhs rhs: Void) -> Bool {
+    return TrafficLight.!=(lhs: lhs, rhs: rhs)
   }
 
 }
@@ -125,6 +133,10 @@ import Foundation
     }
   }
 
+  @objc static public func !=(lhs lhs: Void, rhs rhs: Void) -> Bool {
+    return MathConstants.!=(lhs: lhs, rhs: rhs)
+  }
+
 }
 
 @objc public class StatusWrapper: NSObject {
@@ -152,6 +164,10 @@ import Foundation
     } else {
       return nil
     }
+  }
+
+  @objc static public func !=(lhs lhs: Void, rhs rhs: Void) -> Bool {
+    return Status.!=(lhs: lhs, rhs: rhs)
   }
 
 }
@@ -198,6 +214,10 @@ import Foundation
 
   init(_ wrappedInstance: Beverage) {
     self.wrappedInstance = wrappedInstance
+  }
+
+  @objc static public func !=(lhs lhs: Void, rhs rhs: Void) -> Bool {
+    return Beverage.!=(lhs: lhs, rhs: rhs)
   }
 
 }
@@ -257,6 +277,10 @@ import Foundation
     } else {
       return nil
     }
+  }
+
+  @objc static public func !=(lhs lhs: Void, rhs rhs: Void) -> Bool {
+    return DayOfWeek.!=(lhs: lhs, rhs: rhs)
   }
 
 }
