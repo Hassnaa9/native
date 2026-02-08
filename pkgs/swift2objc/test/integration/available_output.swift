@@ -112,8 +112,8 @@ import Foundation
 
   @available(macOS, introduced: 123.0.0)
   @available(iOS, introduced: 100)
-  @objc public init(prop1: Int, prop2: Int) {
-    wrappedInstance = NewStruct(prop1: prop1, prop2: prop2)
+  @objc public init(prop2: Int, prop1: Int) {
+    wrappedInstance = NewStruct(prop2: prop2, prop1: prop1)
   }
 
   @available(macOS, introduced: 123.4.5)

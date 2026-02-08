@@ -23,6 +23,8 @@ class PropertyDeclaration extends AstNode
   @override
   InputConfig? source;
 
+  int? lineNumber;
+
   @override
   List<AvailabilityInfo> availability;
 
@@ -62,6 +64,7 @@ class PropertyDeclaration extends AstNode
     required this.source,
     required this.availability,
     required this.type,
+    this.lineNumber,
     this.hasSetter = false,
     this.isConstant = false,
     this.hasObjCAnnotation = false,

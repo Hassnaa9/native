@@ -128,6 +128,8 @@ import Foundation
 
   @objc public init(count: Int, enabled: Bool, title: String) {
     wrappedInstance = MyConfig(count: count, enabled: enabled, title: title)
+  @objc public init(title: String, count: Int, enabled: Bool) {
+    wrappedInstance = MyConfig(title: title, count: count, enabled: enabled)
   }
 
 }

@@ -135,6 +135,15 @@ List<InitializerDeclaration> _compoundInitializers(
   final storedProperties = originalCompound.properties.where(
     (prop) => prop.hasSetter && !prop.isStatic,
   );
+  final storedProperties =
+      originalCompound.properties
+          .where((prop) => prop.hasSetter && !prop.isStatic)
+          .toList()
+        ..sort((a, b) {
+          final aLine = a.lineNumber ?? 0;
+          final bLine = b.lineNumber ?? 0;
+          return aLine.compareTo(bLine);
+        });
 
   if (storedProperties.isEmpty) {
     return initializers;
