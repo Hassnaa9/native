@@ -95,5 +95,6 @@ class UniqueNamer {
       return operatorNames[name]!;
     }
 
-    return RegExp(r'\W').hasMatch(name) ? 'operator_overloading' : name;  }
+    return RegExp(r'\W').hasMatch(name) ? 'operator_overloading' : name;
+  }
 }
