@@ -61,43 +61,23 @@ import Foundation
     self.wrappedInstance = wrappedInstance
   }
 
-  @objc public func doubleFunc() throws -> DoubleWrapper {
-    let result = try wrappedInstance.doubleFunc()
-    return DoubleWrapper(result)
-  }
-
-  @objc public func age() throws -> IntWrapper {
-    let result = try wrappedInstance.age
-    return IntWrapper(result)
-  }
-
-  @objc public func str() throws -> String {
-    let result = try wrappedInstance.str
-    return result
-  }
-
-  @objc public func name() throws -> FloatWrapper {
-    let result = try wrappedInstance.name
-    return FloatWrapper(result)
-  }
-
-  @objc public func height() throws -> DoubleWrapper {
-    let result = try wrappedInstance.height
-    return DoubleWrapper(result)
-  }
-
-  @objc public func isTrue() throws -> BoolWrapper {
-    let result = try wrappedInstance.isTrue
-    return BoolWrapper(result)
-  }
-
   @objc public func intFunc() throws -> IntWrapper {
     let result = try wrappedInstance.intFunc()
     return IntWrapper(result)
   }
 
+  @objc public func doubleFunc() throws -> DoubleWrapper {
+    let result = try wrappedInstance.doubleFunc()
+    return DoubleWrapper(result)
+  }
+
   @objc public func strFunc() throws -> String {
     return try wrappedInstance.strFunc()
+  }
+
+  @objc public func floatFunc() throws -> FloatWrapper {
+    let result = try wrappedInstance.floatFunc()
+    return FloatWrapper(result)
   }
 
   @objc public func boolFunc() throws -> BoolWrapper {
@@ -105,9 +85,29 @@ import Foundation
     return BoolWrapper(result)
   }
 
-  @objc public func floatFunc() throws -> FloatWrapper {
-    let result = try wrappedInstance.floatFunc()
+  @objc public func name() throws -> FloatWrapper {
+    let result = try wrappedInstance.name
     return FloatWrapper(result)
+  }
+
+  @objc public func age() throws -> IntWrapper {
+    let result = try wrappedInstance.age
+    return IntWrapper(result)
+  }
+
+  @objc public func isTrue() throws -> BoolWrapper {
+    let result = try wrappedInstance.isTrue
+    return BoolWrapper(result)
+  }
+
+  @objc public func height() throws -> DoubleWrapper {
+    let result = try wrappedInstance.height
+    return DoubleWrapper(result)
+  }
+
+  @objc public func str() throws -> String {
+    let result = try wrappedInstance.str
+    return result
   }
 
 }

@@ -31,14 +31,14 @@ import Foundation
     self.wrappedInstance = wrappedInstance
   }
 
-  @objc public func otherClassGetter() async throws -> OtherClassWrapper {
-    let result = try await wrappedInstance.otherClassGetter
-    return OtherClassWrapper(result)
-  }
-
   @objc public func classGetter() async -> MyClassWrapper {
     let result = await wrappedInstance.classGetter
     return MyClassWrapper(result)
+  }
+
+  @objc public func otherClassGetter() async throws -> OtherClassWrapper {
+    let result = try await wrappedInstance.otherClassGetter
+    return OtherClassWrapper(result)
   }
 
   @objc static public func initWrapper(y: Int) async -> MyClassWrapper {

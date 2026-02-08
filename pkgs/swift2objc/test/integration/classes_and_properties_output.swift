@@ -14,6 +14,75 @@ import Foundation
 @objc public class MyClassWrapper: NSObject {
   var wrappedInstance: MyClass
 
+  @objc public var customSetterProperty: MyOtherClassWrapper {
+    get {
+      MyOtherClassWrapper(wrappedInstance.customSetterProperty)
+    }
+    set {
+      wrappedInstance.customSetterProperty = newValue.wrappedInstance
+    }
+  }
+
+  @objc public var customVariableProperty: MyOtherClassWrapper {
+    get {
+      MyOtherClassWrapper(wrappedInstance.customVariableProperty)
+    }
+    set {
+      wrappedInstance.customVariableProperty = newValue.wrappedInstance
+    }
+  }
+
+  @objc public var representableVariableProperty: Int {
+    get {
+      wrappedInstance.representableVariableProperty
+    }
+    set {
+      wrappedInstance.representableVariableProperty = newValue
+    }
+  }
+
+  @objc public var representableGetterProperty: Int {
+    get {
+      wrappedInstance.representableGetterProperty
+    }
+  }
+
+  @objc public unowned var unownedProperty: MyOtherClassWrapper {
+    get {
+      MyOtherClassWrapper(wrappedInstance.unownedProperty)
+    }
+    set {
+      wrappedInstance.unownedProperty = newValue.wrappedInstance
+    }
+  }
+
+  @objc public var implicitGetterProperty: Int {
+    get {
+      wrappedInstance.implicitGetterProperty
+    }
+  }
+
+  @objc public var representableConstantProperty: Int {
+    get {
+      wrappedInstance.representableConstantProperty
+    }
+  }
+
+  @objc public var representableSetterProperty: Int {
+    get {
+      wrappedInstance.representableSetterProperty
+    }
+    set {
+      wrappedInstance.representableSetterProperty = newValue
+    }
+  }
+
+  @objc public var customGetterProperty: MyOtherClassWrapper {
+    get {
+      MyOtherClassWrapper(wrappedInstance.customGetterProperty)
+    }
+  }
+
   @objc public var lazyProperty: Int {
     get {
       wrappedInstance.lazyProperty
@@ -32,78 +101,9 @@ import Foundation
     }
   }
 
-  @objc public unowned var unownedProperty: MyOtherClassWrapper {
-    get {
-      MyOtherClassWrapper(wrappedInstance.unownedProperty)
-    }
-    set {
-      wrappedInstance.unownedProperty = newValue.wrappedInstance
-    }
-  }
-
-  @objc public var customGetterProperty: MyOtherClassWrapper {
-    get {
-      MyOtherClassWrapper(wrappedInstance.customGetterProperty)
-    }
-  }
-
-  @objc public var customSetterProperty: MyOtherClassWrapper {
-    get {
-      MyOtherClassWrapper(wrappedInstance.customSetterProperty)
-    }
-    set {
-      wrappedInstance.customSetterProperty = newValue.wrappedInstance
-    }
-  }
-
   @objc public var customConstantProperty: MyOtherClassWrapper {
     get {
       MyOtherClassWrapper(wrappedInstance.customConstantProperty)
-    }
-  }
-
-  @objc public var customVariableProperty: MyOtherClassWrapper {
-    get {
-      MyOtherClassWrapper(wrappedInstance.customVariableProperty)
-    }
-    set {
-      wrappedInstance.customVariableProperty = newValue.wrappedInstance
-    }
-  }
-
-  @objc public var implicitGetterProperty: Int {
-    get {
-      wrappedInstance.implicitGetterProperty
-    }
-  }
-
-  @objc public var representableGetterProperty: Int {
-    get {
-      wrappedInstance.representableGetterProperty
-    }
-  }
-
-  @objc public var representableSetterProperty: Int {
-    get {
-      wrappedInstance.representableSetterProperty
-    }
-    set {
-      wrappedInstance.representableSetterProperty = newValue
-    }
-  }
-
-  @objc public var representableConstantProperty: Int {
-    get {
-      wrappedInstance.representableConstantProperty
-    }
-  }
-
-  @objc public var representableVariableProperty: Int {
-    get {
-      wrappedInstance.representableVariableProperty
-    }
-    set {
-      wrappedInstance.representableVariableProperty = newValue
     }
   }
 

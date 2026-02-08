@@ -53,12 +53,12 @@ import Foundation
     self.wrappedInstance = wrappedInstance
   }
 
-  @objc public init(label param: MyClassWrapper?) {
-    wrappedInstance = MyClass(label: param?.wrappedInstance)
-  }
-
   @objc public init(label1 param1: MyClassWrapper?, label2: Int, label3 param3: MyStructWrapper?) {
     wrappedInstance = MyClass(label1: param1?.wrappedInstance, label2: label2, label3: param3?.wrappedInstance)
+  }
+
+  @objc public init(label param: MyClassWrapper?) {
+    wrappedInstance = MyClass(label: param?.wrappedInstance)
   }
 
   @objc public func methodOptionalArgs(label param: MyClassWrapper?) {

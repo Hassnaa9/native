@@ -21,8 +21,8 @@ import Foundation
     self.wrappedInstance = wrappedInstance
   }
 
-  @objc public func asyncThrowsMethod(y: Int) async throws -> MyClassWrapper {
-    let result = try await wrappedInstance.asyncThrowsMethod(y: y)
+  @objc public func intMethod(y: Int) async -> MyClassWrapper {
+    let result = await wrappedInstance.intMethod(y: y)
     return MyClassWrapper(result)
   }
 
@@ -30,8 +30,8 @@ import Foundation
     return await wrappedInstance.voidMethod()
   }
 
-  @objc public func intMethod(y: Int) async -> MyClassWrapper {
-    let result = await wrappedInstance.intMethod(y: y)
+  @objc public func asyncThrowsMethod(y: Int) async throws -> MyClassWrapper {
+    let result = try await wrappedInstance.asyncThrowsMethod(y: y)
     return MyClassWrapper(result)
   }
 

@@ -18,13 +18,13 @@ import Foundation
     self.wrappedInstance = wrappedInstance
   }
 
+  @objc static public func myMethod2() {
+    return MyStruct.myMethod2()
+  }
+
   @objc static public func myMethod(label1 param1: Int, param2: MyOtherStructWrapper) -> MyOtherStructWrapper {
     let result = MyStruct.myMethod(label1: param1, param2: param2.wrappedInstance)
     return MyOtherStructWrapper(result)
-  }
-
-  @objc static public func myMethod2() {
-    return MyStruct.myMethod2()
   }
 
   @objc static public func myMethod3() {

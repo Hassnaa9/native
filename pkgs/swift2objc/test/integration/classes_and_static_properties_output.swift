@@ -20,18 +20,9 @@ import Foundation
     }
   }
 
-  @objc static public var customSetterVariable: MyOtherClassWrapper {
+  @objc static public var representableConstantProperty: Int {
     get {
-      MyOtherClassWrapper(MyClass.customSetterVariable)
-    }
-    set {
-      MyClass.customSetterVariable = newValue.wrappedInstance
-    }
-  }
-
-  @objc static public var customConstantProperty: MyOtherClassWrapper {
-    get {
-      MyOtherClassWrapper(MyClass.customConstantProperty)
+      MyClass.representableConstantProperty
     }
   }
 
@@ -41,6 +32,15 @@ import Foundation
     }
     set {
       MyClass.customVariableProperty = newValue.wrappedInstance
+    }
+  }
+
+  @objc static public var customSetterVariable: MyOtherClassWrapper {
+    get {
+      MyOtherClassWrapper(MyClass.customSetterVariable)
+    }
+    set {
+      MyClass.customSetterVariable = newValue.wrappedInstance
     }
   }
 
@@ -59,18 +59,18 @@ import Foundation
     }
   }
 
-  @objc static public var representableConstantProperty: Int {
-    get {
-      MyClass.representableConstantProperty
-    }
-  }
-
   @objc static public var representableVariableProperty: Int {
     get {
       MyClass.representableVariableProperty
     }
     set {
       MyClass.representableVariableProperty = newValue
+    }
+  }
+
+  @objc static public var customConstantProperty: MyOtherClassWrapper {
+    get {
+      MyOtherClassWrapper(MyClass.customConstantProperty)
     }
   }
 

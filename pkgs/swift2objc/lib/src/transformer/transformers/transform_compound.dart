@@ -106,17 +106,17 @@ ClassDeclaration transformCompound(
 
     transformedCompound.properties = transformedProperties
         .removeWhereType<PropertyDeclaration>()
-        .sortedById();
+        .toList();
 
     transformedCompound.initializers = transformedInitializers
         .removeWhereType<InitializerDeclaration>()
-        .sortedById();
+        .toList();
 
     transformedCompound.methods = [
       ...transformedMethods,
       ...transformedProperties.removeWhereType<MethodDeclaration>(),
       ...transformedInitializers.removeWhereType<MethodDeclaration>(),
-    ].sortedById();
+    ].toList();
 
     assert(transformedProperties.isEmpty);
     assert(transformedInitializers.isEmpty);
@@ -133,8 +133,7 @@ List<InitializerDeclaration> _compoundInitializers(
     return initializers;
   }
   final storedProperties = originalCompound.properties
-      .where((prop) => prop.hasSetter && !prop.isStatic)
-      .sortedById();
+      .where((prop) => prop.hasSetter && !prop.isStatic);
 
   if (storedProperties.isEmpty) {
     return initializers;

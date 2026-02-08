@@ -14,66 +14,9 @@ import Foundation
 @objc public class MyStructWrapper: NSObject {
   var wrappedInstance: MyStruct
 
-  @objc public var mutatingProperty: Int {
-    get {
-      wrappedInstance.mutatingProperty
-    }
-  }
-
   @objc public var customGetterProperty: MyOtherStructWrapper {
     get {
       MyOtherStructWrapper(wrappedInstance.customGetterProperty)
-    }
-  }
-
-  @objc public var customSetterProperty: MyOtherStructWrapper {
-    get {
-      MyOtherStructWrapper(wrappedInstance.customSetterProperty)
-    }
-    set {
-      wrappedInstance.customSetterProperty = newValue.wrappedInstance
-    }
-  }
-
-  @objc public var customConstantProperty: MyOtherStructWrapper {
-    get {
-      MyOtherStructWrapper(wrappedInstance.customConstantProperty)
-    }
-  }
-
-  @objc public var customVariableProperty: MyOtherStructWrapper {
-    get {
-      MyOtherStructWrapper(wrappedInstance.customVariableProperty)
-    }
-    set {
-      wrappedInstance.customVariableProperty = newValue.wrappedInstance
-    }
-  }
-
-  @objc public var implicitGetterProperty: Int {
-    get {
-      wrappedInstance.implicitGetterProperty
-    }
-  }
-
-  @objc public var representableGetterProperty: Int {
-    get {
-      wrappedInstance.representableGetterProperty
-    }
-  }
-
-  @objc public var representableSetterProperty: Int {
-    get {
-      wrappedInstance.representableSetterProperty
-    }
-    set {
-      wrappedInstance.representableSetterProperty = newValue
-    }
-  }
-
-  @objc public var representableConstantProperty: Int {
-    get {
-      wrappedInstance.representableConstantProperty
     }
   }
 
@@ -86,12 +29,69 @@ import Foundation
     }
   }
 
+  @objc public var customVariableProperty: MyOtherStructWrapper {
+    get {
+      MyOtherStructWrapper(wrappedInstance.customVariableProperty)
+    }
+    set {
+      wrappedInstance.customVariableProperty = newValue.wrappedInstance
+    }
+  }
+
+  @objc public var customSetterProperty: MyOtherStructWrapper {
+    get {
+      MyOtherStructWrapper(wrappedInstance.customSetterProperty)
+    }
+    set {
+      wrappedInstance.customSetterProperty = newValue.wrappedInstance
+    }
+  }
+
+  @objc public var representableConstantProperty: Int {
+    get {
+      wrappedInstance.representableConstantProperty
+    }
+  }
+
+  @objc public var representableGetterProperty: Int {
+    get {
+      wrappedInstance.representableGetterProperty
+    }
+  }
+
+  @objc public var mutatingProperty: Int {
+    get {
+      wrappedInstance.mutatingProperty
+    }
+  }
+
+  @objc public var implicitGetterProperty: Int {
+    get {
+      wrappedInstance.implicitGetterProperty
+    }
+  }
+
+  @objc public var representableSetterProperty: Int {
+    get {
+      wrappedInstance.representableSetterProperty
+    }
+    set {
+      wrappedInstance.representableSetterProperty = newValue
+    }
+  }
+
+  @objc public var customConstantProperty: MyOtherStructWrapper {
+    get {
+      MyOtherStructWrapper(wrappedInstance.customConstantProperty)
+    }
+  }
+
   init(_ wrappedInstance: MyStruct) {
     self.wrappedInstance = wrappedInstance
   }
 
-  @objc public init(customSetterProperty: MyOtherStructWrapper, customVariableProperty: MyOtherStructWrapper, representableSetterProperty: Int, representableVariableProperty: Int) {
-    wrappedInstance = MyStruct(customSetterProperty: customSetterProperty.wrappedInstance, customVariableProperty: customVariableProperty.wrappedInstance, representableSetterProperty: representableSetterProperty, representableVariableProperty: representableVariableProperty)
+  @objc public init(representableVariableProperty: Int, customVariableProperty: MyOtherStructWrapper, customSetterProperty: MyOtherStructWrapper, representableSetterProperty: Int) {
+    wrappedInstance = MyStruct(representableVariableProperty: representableVariableProperty, customVariableProperty: customVariableProperty.wrappedInstance, customSetterProperty: customSetterProperty.wrappedInstance, representableSetterProperty: representableSetterProperty)
   }
 
 }

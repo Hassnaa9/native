@@ -14,24 +14,20 @@ import Foundation
 @objc public class MyClassWrapper: NSObject {
   var wrappedInstance: MyClass
 
-  @objc public var customProperty: MyOtherClassWrapper {
-    get {
-      MyOtherClassWrapper(wrappedInstance.customProperty)
-    }
-  }
-
   @objc public var representableProperty: Int {
     get {
       wrappedInstance.representableProperty
     }
   }
 
-  init(_ wrappedInstance: MyClass) {
-    self.wrappedInstance = wrappedInstance
+  @objc public var customProperty: MyOtherClassWrapper {
+    get {
+      MyOtherClassWrapper(wrappedInstance.customProperty)
+    }
   }
 
-  @objc public init(outerLabel representableProperty: Int, customProperty: MyOtherClassWrapper) {
-    wrappedInstance = MyClass(outerLabel: representableProperty, customProperty: customProperty.wrappedInstance)
+  init(_ wrappedInstance: MyClass) {
+    self.wrappedInstance = wrappedInstance
   }
 
   @objc public init?(outerLabel x: Int) {
@@ -44,6 +40,10 @@ import Foundation
 
   @objc public init(label1 name1: Int, label2: Int, _ name3: Int) {
     wrappedInstance = MyClass(label1: name1, label2: label2, name3)
+  }
+
+  @objc public init(outerLabel representableProperty: Int, customProperty: MyOtherClassWrapper) {
+    wrappedInstance = MyClass(outerLabel: representableProperty, customProperty: customProperty.wrappedInstance)
   }
 
 }

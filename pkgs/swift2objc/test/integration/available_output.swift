@@ -27,17 +27,6 @@ import Foundation
 @objc public class NewApiWrapper: NSObject {
   var wrappedInstance: NewApi
 
-  @available(macOS, introduced: 123.0.0)
-  @available(iOS, introduced: 100)
-  @objc public var prop1: Int {
-    get {
-      wrappedInstance.prop1
-    }
-    set {
-      wrappedInstance.prop1 = newValue
-    }
-  }
-
   @available(macOS, introduced: 123.0.0, deprecated: 345.6)
   @available(iOS, introduced: 234.5.6)
   @objc public var prop2: Int {
@@ -46,6 +35,17 @@ import Foundation
     }
     set {
       wrappedInstance.prop2 = newValue
+    }
+  }
+
+  @available(macOS, introduced: 123.0.0)
+  @available(iOS, introduced: 100)
+  @objc public var prop1: Int {
+    get {
+      wrappedInstance.prop1
+    }
+    set {
+      wrappedInstance.prop1 = newValue
     }
   }
 
@@ -59,6 +59,12 @@ import Foundation
     wrappedInstance = NewApi(x: x)
   }
 
+  @available(macOS, introduced: 200, deprecated: 201, obsoleted: 202)
+  @available(iOS, unavailable, introduced: 100)
+  @objc public func method3() -> Int {
+    return wrappedInstance.method3()
+  }
+
   @available(macOS, introduced: 123.0.0)
   @available(iOS, introduced: 100)
   @objc public func method1() -> Int {
@@ -69,12 +75,6 @@ import Foundation
   @available(iOS, introduced: 100.1)
   @objc public func method2() -> Int {
     return wrappedInstance.method2()
-  }
-
-  @available(macOS, introduced: 200, deprecated: 201, obsoleted: 202)
-  @available(iOS, unavailable, introduced: 100)
-  @objc public func method3() -> Int {
-    return wrappedInstance.method3()
   }
 
 }
@@ -116,16 +116,16 @@ import Foundation
     wrappedInstance = NewStruct(prop1: prop1, prop2: prop2)
   }
 
-  @available(macOS, introduced: 123.0.0)
-  @available(iOS, introduced: 100)
-  @objc public func method1() -> Int {
-    return wrappedInstance.method1()
-  }
-
   @available(macOS, introduced: 123.4.5)
   @available(iOS, introduced: 100.1)
   @objc public func method2() -> Int {
     return wrappedInstance.method2()
+  }
+
+  @available(macOS, introduced: 123.0.0)
+  @available(iOS, introduced: 100)
+  @objc public func method1() -> Int {
+    return wrappedInstance.method1()
   }
 
 }

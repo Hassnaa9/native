@@ -9,9 +9,9 @@ import Foundation
     self.wrappedInstance = wrappedInstance
   }
 
-  @objc static public func makeOuter() -> OuterClassWrapper {
-    let result = OuterClass.makeOuter()
-    return OuterClassWrapper(result)
+  @objc static public func makeInnerStruct() -> OuterClassWrapper.InnerStructWrapper {
+    let result = OuterClass.makeInnerStruct()
+    return InnerStructWrapper(result)
   }
 
   @objc static public func makeInnerClass() -> OuterClassWrapper.InnerClassWrapper {
@@ -19,9 +19,9 @@ import Foundation
     return InnerClassWrapper(result)
   }
 
-  @objc static public func makeInnerStruct() -> OuterClassWrapper.InnerStructWrapper {
-    let result = OuterClass.makeInnerStruct()
-    return InnerStructWrapper(result)
+  @objc static public func makeOuter() -> OuterClassWrapper {
+    let result = OuterClass.makeOuter()
+    return OuterClassWrapper(result)
   }
 
   @objc public class InnerClassWrapper: NSObject {
@@ -50,14 +50,14 @@ import Foundation
       self.wrappedInstance = wrappedInstance
     }
 
-    @objc static public func makeOuter() -> OuterClassWrapper {
-      let result = OuterClass.InnerStruct.makeOuter()
-      return OuterClassWrapper(result)
-    }
-
     @objc static public func makeInner() -> OuterClassWrapper.InnerStructWrapper {
       let result = OuterClass.InnerStruct.makeInner()
       return InnerStructWrapper(result)
+    }
+
+    @objc static public func makeOuter() -> OuterClassWrapper {
+      let result = OuterClass.InnerStruct.makeOuter()
+      return OuterClassWrapper(result)
     }
 
   }
@@ -76,14 +76,14 @@ import Foundation
     return OuterStructWrapper(result)
   }
 
-  @objc static public func makeInnerStruct() -> OuterStructWrapper.InnerStructWrapper {
-    let result = OuterStruct.makeInnerStruct()
-    return InnerStructWrapper(result)
-  }
-
   @objc static public func makeInnerClass() -> OuterStructWrapper.InnerClassWrapper {
     let result = OuterStruct.makeInnerClass()
     return InnerClassWrapper(result)
+  }
+
+  @objc static public func makeInnerStruct() -> OuterStructWrapper.InnerStructWrapper {
+    let result = OuterStruct.makeInnerStruct()
+    return InnerStructWrapper(result)
   }
 
   @objc public class InnerStructWrapper: NSObject {

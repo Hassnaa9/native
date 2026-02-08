@@ -13,8 +13,8 @@ import Foundation
     return wrappedInstance.method1(x: x)
   }
 
-  @objc public func method2(x: MyClassWrapper) -> MyClassWrapper {
-    let result = wrappedInstance.method2(x: x.wrappedInstance)
+  @objc public func method4(x: MyClassWrapper) -> MyClassWrapper {
+    let result = wrappedInstance.method4(x: x.wrappedInstance)
     return MyClassWrapper(result)
   }
 
@@ -23,8 +23,8 @@ import Foundation
     return result == nil ? nil : MyClassWrapper(result!)
   }
 
-  @objc public func method4(x: MyClassWrapper) -> MyClassWrapper {
-    let result = wrappedInstance.method4(x: x.wrappedInstance)
+  @objc public func method2(x: MyClassWrapper) -> MyClassWrapper {
+    let result = wrappedInstance.method2(x: x.wrappedInstance)
     return MyClassWrapper(result)
   }
 
