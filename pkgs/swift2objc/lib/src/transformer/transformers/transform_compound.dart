@@ -132,8 +132,9 @@ List<InitializerDeclaration> _compoundInitializers(
   if (originalCompound is! StructDeclaration || initializers.isNotEmpty) {
     return initializers;
   }
-  final storedProperties = originalCompound.properties
-      .where((prop) => prop.hasSetter && !prop.isStatic);
+  final storedProperties = originalCompound.properties.where(
+    (prop) => prop.hasSetter && !prop.isStatic,
+  );
 
   if (storedProperties.isEmpty) {
     return initializers;
