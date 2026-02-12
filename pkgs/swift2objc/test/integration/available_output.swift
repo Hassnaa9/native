@@ -9,9 +9,6 @@ import Foundation
     get {
       globalVar
     }
-    set {
-      globalVar = newValue
-    }
   }
 
   @available(macOS, introduced: 234.5.6)
