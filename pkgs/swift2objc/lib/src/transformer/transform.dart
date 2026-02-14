@@ -5,6 +5,7 @@
 import '../ast/_core/interfaces/compound_declaration.dart';
 import '../ast/_core/interfaces/declaration.dart';
 import '../ast/_core/interfaces/nestable_declaration.dart';
+import '../ast/_core/shared/referred_type.dart';
 import '../ast/declarations/built_in/built_in_declaration.dart';
 import '../ast/declarations/compounds/class_declaration.dart';
 import '../ast/declarations/compounds/enum_declaration.dart';
@@ -31,6 +32,38 @@ class TransformationState {
 
   // Bindings that will be generated as stubs.
   final stubs = <Declaration>{};
+
+  // Map from tuple signature to generated wrapper class
+  final _tupleWrappers = <String, ClassDeclaration>{};
+
+  // Map from wrapper class to original tuple type (for unwrapping)
+  final _wrapperToTupleType = <ClassDeclaration, TupleType>{};
+
+  /// Check if a tuple wrapper class has already been generated
+  bool hasGeneratedTuple(String className) =>
+      _tupleWrappers.containsKey(className);
+
+  /// Get the wrapper class for a tuple
+  ClassDeclaration getTupleWrapper(String className) =>
+      _tupleWrappers[className]!;
+
+  /// Register a newly generated tuple wrapper class
+  void registerTupleWrapper(
+    String className,
+    ClassDeclaration wrapperClass,
+    TupleType originalTupleType,
+  ) {
+    _tupleWrappers[className] = wrapperClass;
+    _wrapperToTupleType[wrapperClass] = originalTupleType;
+    bindings.add(wrapperClass);
+  }
+
+  /// Get the original tuple type for a wrapper class
+  TupleType? getOriginalTupleType(ClassDeclaration wrapperClass) =>
+      _wrapperToTupleType[wrapperClass];
+
+  /// Get all generated tuple wrapper classes
+  List<ClassDeclaration> get tupleWrappers => _tupleWrappers.values.toList();
 }
 
 /// Transforms the given declarations into the desired ObjC wrapped declarations
@@ -80,6 +113,7 @@ List<Declaration> transform(
   return [
     ...transformedDeclarations,
     ..._getPrimitiveWrapperClasses(state),
+    ...state.tupleWrappers,
   ].sortedById();
 }
 

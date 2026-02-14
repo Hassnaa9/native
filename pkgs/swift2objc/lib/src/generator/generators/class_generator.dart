@@ -154,11 +154,23 @@ List<String> _generateClassProperty(PropertyDeclaration property) {
   if (property.isStatic) {
     header.write('static ');
   }
+
   final prefixes = [if (property.unowned) 'unowned', if (property.weak) 'weak'];
 
   var prefix = prefixes.isEmpty ? '' : '${prefixes.join(' ')} ';
   var propSwiftType = property.type.swiftType;
 
+  // Check if this is a simple stored property (no getter/setter)
+  if (property.getter == null && property.setter == null) {
+    // Generate simple stored property
+    final varOrLet = property.isConstant ? 'let' : 'var';
+    return [
+      ...generateAvailability(property),
+      'public $prefix$varOrLet ${property.name}: $propSwiftType\n',
+    ];
+  }
+
+  // Generate computed property with getter/setter
   header.write('public ${prefix}var ${property.name}: $propSwiftType {');
 
   final getterLines = [

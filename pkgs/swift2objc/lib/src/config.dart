@@ -99,8 +99,8 @@ class FilesInputConfig implements InputConfig, HasSymbolgraphCommand {
       tempModuleName,
       '-target',
       target,
-      '-sdk',
-      sdkPath,
+      // '-sdk',
+      // sdkPath,
     ],
   );
 }
@@ -122,8 +122,8 @@ class ModuleInputConfig implements InputConfig, HasSymbolgraphCommand {
       module,
       '-target',
       target,
-      '-sdk',
-      sdkPath,
+      // '-sdk',
+      // sdkPath,
       '-output-dir',
       '.',
     ],

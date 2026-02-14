@@ -11,6 +11,7 @@ import '../../ast/declarations/compounds/members/property_declaration.dart';
 import '../../ast/declarations/typealias_declaration.dart';
 import '../../transformer/_core/primitive_wrappers.dart';
 import '../transform.dart';
+import '../transformers/transform_referred_type.dart';
 import 'unique_namer.dart';
 
 // TODO(https://github.com/dart-lang/native/issues/1358): These functions should
@@ -24,6 +25,11 @@ import 'unique_namer.dart';
   TransformationState state, {
   bool shouldWrapPrimitives = false,
 }) {
+  // Handle tuple types first
+  if (type is TupleType) {
+    return _wrapTupleValue(type, value, globalNamer, state);
+  }
+
   final (wrappedPrimitiveType, returnsWrappedPrimitive) =
       maybeGetPrimitiveWrapper(type, shouldWrapPrimitives, state);
   if (returnsWrappedPrimitive) {
@@ -77,6 +83,7 @@ import 'unique_namer.dart';
 (String value, ReferredType type) maybeUnwrapValue(
   ReferredType type,
   String value,
+  TransformationState state,
 ) {
   if (!type.isObjCRepresentable) {
     return (value, type);
@@ -87,16 +94,21 @@ import 'unique_namer.dart';
   } else if (type is DeclaredType) {
     final declaration = type.declaration;
     if (declaration is ClassDeclaration) {
+      // Check if this is a tuple wrapper
+      if (declaration.id.startsWith('tuple_wrapper_')) {
+        return _unwrapTupleValue(declaration, value, state);
+      }
+
       final wrappedInstance = declaration.wrappedInstance!;
       return ('$value.${wrappedInstance.name}', wrappedInstance.type);
     } else if (declaration is TypealiasDeclaration) {
-      return maybeUnwrapValue(declaration.target, value);
+      return maybeUnwrapValue(declaration.target, value, state);
     } else {
       return (value, type);
     }
   } else if (type is OptionalType) {
     final optValue = '$value?';
-    var (newValue, newType) = maybeUnwrapValue(type.child, optValue);
+    var (newValue, newType) = maybeUnwrapValue(type.child, optValue, state);
     if (newValue == optValue) {
       // newValue is value?, so the ? isn't necessary and causes compile errors.
       newValue = value;
@@ -105,6 +117,87 @@ import 'unique_namer.dart';
   } else {
     throw UnimplementedError('Unknown type: $type');
   }
+}
+
+/// Wraps a tuple value by creating an instance of the tuple wrapper class
+(String, ReferredType) _wrapTupleValue(
+  TupleType tupleType,
+  String tupleExpression,
+  UniqueNamer globalNamer,
+  TransformationState state,
+) {
+  // Transform the tuple type to get the wrapper class
+  final wrapperType = transformReferredType(tupleType, globalNamer, state);
+  final wrapperClass =
+      (wrapperType as DeclaredType).declaration as ClassDeclaration;
+
+  // Build the initializer call
+  final args = <String>[];
+  for (var i = 0; i < tupleType.elements.length; i++) {
+    final element = tupleType.elements[i];
+    final propertyName = element.label ?? '_$i';
+    final elementAccess = element.label != null
+        ? '$tupleExpression.${element.label}'
+        : '$tupleExpression.$i';
+
+    // Recursively wrap the element if needed
+    final (wrappedElement, _) = maybeWrapValue(
+      element.type,
+      elementAccess,
+      globalNamer,
+      state,
+    );
+
+    args.add('$propertyName: $wrappedElement');
+  }
+
+  return ('${wrapperClass.name}(${args.join(', ')})', wrapperType);
+}
+
+/// Unwraps a tuple wrapper class back to a Swift tuple
+(String, ReferredType) _unwrapTupleValue(
+  ClassDeclaration wrapperClass,
+  String wrapperExpression,
+  TransformationState state,
+) {
+  final originalTupleType = state.getOriginalTupleType(wrapperClass);
+
+  if (originalTupleType == null) {
+    final message =
+        'Tuple wrapper class ${wrapperClass.name} is not '
+        'registered in transformation state';
+    throw StateError(message);
+  }
+
+  // Build tuple literal from wrapper properties
+  final elements = <String>[];
+
+  for (var i = 0; i < originalTupleType.elements.length; i++) {
+    final element = originalTupleType.elements[i];
+    final propertyName = element.label ?? '_$i';
+
+    // Access the property from the wrapper
+    final propertyAccess = '$wrapperExpression.$propertyName';
+
+    // Recursively unwrap if the element type was also wrapped
+    final property = wrapperClass.properties.firstWhere(
+      (p) => p.name == propertyName,
+    );
+    final (unwrappedElement, _) = maybeUnwrapValue(
+      property.type,
+      propertyAccess,
+      state,
+    );
+
+    // Add label if present
+    if (element.label != null) {
+      elements.add('${element.label}: $unwrappedElement');
+    } else {
+      elements.add(unwrappedElement);
+    }
+  }
+
+  return ('(${elements.join(', ')})', originalTupleType);
 }
 
 InitializerDeclaration buildWrapperInitializer(

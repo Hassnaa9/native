@@ -195,6 +195,7 @@ List<String> _generateSetterStatements(
   final (unwrappedValue, unwrappedType) = maybeUnwrapValue(
     transformedProperty.type,
     'newValue',
+    state,
   );
 
   assert(

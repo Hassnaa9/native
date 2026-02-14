@@ -51,6 +51,7 @@ Declaration transformInitializer(
         wrappedClassInstance,
         methodReturnType,
         transformedParams,
+        state, // ADD STATE HERE
       ),
       throws: originalInitializer.throws,
       async: originalInitializer.async,
@@ -77,6 +78,7 @@ Declaration transformInitializer(
     originalInitializer,
     wrappedClassInstance,
     transformedInitializer,
+    state, // ADD STATE HERE
   );
 
   return transformedInitializer;
@@ -86,11 +88,13 @@ List<String> _generateInitializerStatements(
   InitializerDeclaration originalInitializer,
   PropertyDeclaration wrappedClassInstance,
   InitializerDeclaration transformedInitializer,
+  TransformationState state, // ADD STATE PARAMETER
 ) {
   final (instanceConstruction, localNamer) = _generateInstanceConstruction(
     originalInitializer,
     wrappedClassInstance,
     transformedInitializer.params,
+    state, // PASS STATE HERE
   );
   if (originalInitializer.isFailable) {
     final instance = localNamer.makeUnique('instance');
@@ -111,11 +115,13 @@ List<String> _generateMethodStatements(
   PropertyDeclaration wrappedClassInstance,
   ReferredType wrapperClass,
   List<Parameter> transformedParams,
+  TransformationState state, // ADD STATE PARAMETER
 ) {
   final (instanceConstruction, localNamer) = _generateInstanceConstruction(
     originalInitializer,
     wrappedClassInstance,
     transformedParams,
+    state, // PASS STATE HERE
   );
   final instance = localNamer.makeUnique('instance');
   if (originalInitializer.isFailable) {
@@ -138,12 +144,14 @@ List<String> _generateMethodStatements(
   InitializerDeclaration originalInitializer,
   PropertyDeclaration wrappedClassInstance,
   List<Parameter> transformedParams,
+  TransformationState state, // ADD STATE PARAMETER
 ) {
   final localNamer = UniqueNamer();
   final arguments = generateInvocationParams(
     localNamer,
     originalInitializer.params,
     transformedParams,
+    state, // PASS STATE HERE
   );
   var instanceConstruction =
       '${wrappedClassInstance.type.swiftType}($arguments)';

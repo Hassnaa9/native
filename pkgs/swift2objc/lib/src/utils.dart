@@ -64,5 +64,6 @@ Future<Uri> macOSSdk = _findSdk(['--sdk', 'macosx']);
 Future<Uri> iOSSdk = _findSdk(['--sdk', 'iphoneos']);
 
 Future<Uri> _findSdk(List<String> args) async => Uri.directory(
-  (await _runStdout('xcrun', [...args, '--show-sdk-path'])).trim(),
+  // (await _runStdout('xcrun', [...args, '--show-sdk-path'])).trim(),
+  '/home/hassnaa9/swift-6.0.3-RELEASE-ubuntu24.04/usr/bin/swift',
 );

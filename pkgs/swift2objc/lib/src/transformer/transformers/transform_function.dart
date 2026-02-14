@@ -147,6 +147,7 @@ String generateInvocationParams(
   UniqueNamer localNamer,
   List<Parameter> originalParams,
   List<Parameter> transformedParams,
+  TransformationState state, // ADD THIS PARAMETER
 ) {
   assert(originalParams.length == transformedParams.length);
 
@@ -162,6 +163,7 @@ String generateInvocationParams(
     final (unwrappedParamValue, unwrappedType) = maybeUnwrapValue(
       transformedParam.type,
       transformedParamName,
+      state, // NOW THIS WORKS
     );
 
     assert(unwrappedType.sameAs(originalParam.type));
@@ -189,6 +191,7 @@ List<String> _generateStatements(
     localNamer,
     originalFunction.params,
     transformedMethod.params,
+    state, // PASS STATE HERE
   );
 
   var originalMethodCall = originalCallGenerator(arguments);
