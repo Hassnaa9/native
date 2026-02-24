@@ -24,6 +24,11 @@ import Foundation
     return Tuple_Int_StringBoolDouble(result)
   }
 
+  @objc public func getRepeatedNestedTuple() -> Tuple_IntString_IntString {
+    let result = wrappedInstance.getRepeatedNestedTuple()
+    return Tuple_IntString_IntString(result)
+  }
+
   @objc public func getLargeTuple() -> Tuple_Int_Int_Int_Int_Int {
     let result = wrappedInstance.getLargeTuple()
     return Tuple_Int_Int_Int_Int_Int(result)
@@ -85,6 +90,33 @@ import Foundation
   }
 
   init(_ wrappedInstance: (Bool, Double)) {
+    self.wrappedInstance = wrappedInstance
+  }
+
+}
+
+@objc public class Tuple_IntString_IntString: NSObject {
+  var wrappedInstance: ((Int, String), (Int, String))
+
+  @objc public var _0: Tuple_Int_String {
+    get {
+      Tuple_Int_String(wrappedInstance.0)
+    }
+    set {
+      wrappedInstance.0 = newValue.wrappedInstance
+    }
+  }
+
+  @objc public var _1: Tuple_Int_String {
+    get {
+      Tuple_Int_String(wrappedInstance.1)
+    }
+    set {
+      wrappedInstance.1 = newValue.wrappedInstance
+    }
+  }
+
+  init(_ wrappedInstance: ((Int, String), (Int, String))) {
     self.wrappedInstance = wrappedInstance
   }
 
@@ -166,6 +198,33 @@ import Foundation
   }
 
   init(_ wrappedInstance: (Int, Int, Int, Int, Int)) {
+    self.wrappedInstance = wrappedInstance
+  }
+
+}
+
+@objc public class Tuple_Int_String: NSObject {
+  var wrappedInstance: (Int, String)
+
+  @objc public var _0: Int {
+    get {
+      wrappedInstance.0
+    }
+    set {
+      wrappedInstance.0 = newValue
+    }
+  }
+
+  @objc public var _1: String {
+    get {
+      wrappedInstance.1
+    }
+    set {
+      wrappedInstance.1 = newValue
+    }
+  }
+
+  init(_ wrappedInstance: (Int, String)) {
     self.wrappedInstance = wrappedInstance
   }
 
