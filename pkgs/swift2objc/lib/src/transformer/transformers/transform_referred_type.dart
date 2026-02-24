@@ -132,7 +132,7 @@ ClassDeclaration _generateTupleWrapperClass(
       source: null,
       availability: const [],
       type: transformedType,
-      hasSetter: false,
+      hasSetter: true,
       isConstant: false,
       hasObjCAnnotation: true,
       isStatic: false,
@@ -155,6 +155,9 @@ ClassDeclaration _generateTupleWrapperClass(
     );
 
     property.getter = PropertyStatements([wrappedValue]);
+
+    final (unwrappedValue, _) = maybeUnwrapValue(transformedType, 'newValue');
+    property.setter = PropertyStatements(['$accessor = $unwrappedValue']);
 
     properties.add(property);
   }

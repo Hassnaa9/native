@@ -70,11 +70,17 @@ import Foundation
     get {
       wrappedInstance.0
     }
+    set {
+      wrappedInstance.0 = newValue
+    }
   }
 
   @objc public var _1: Double {
     get {
       wrappedInstance.1
+    }
+    set {
+      wrappedInstance.1 = newValue
     }
   }
 
@@ -91,11 +97,17 @@ import Foundation
     get {
       wrappedInstance.0
     }
+    set {
+      wrappedInstance.0 = newValue
+    }
   }
 
   @objc public var _1: Int {
     get {
       wrappedInstance.1
+    }
+    set {
+      wrappedInstance.1 = newValue
     }
   }
 
@@ -112,11 +124,17 @@ import Foundation
     get {
       wrappedInstance.0
     }
+    set {
+      wrappedInstance.0 = newValue
+    }
   }
 
   @objc public var _1: Int {
     get {
       wrappedInstance.1
+    }
+    set {
+      wrappedInstance.1 = newValue
     }
   }
 
@@ -124,17 +142,26 @@ import Foundation
     get {
       wrappedInstance.2
     }
+    set {
+      wrappedInstance.2 = newValue
+    }
   }
 
   @objc public var _3: Int {
     get {
       wrappedInstance.3
     }
+    set {
+      wrappedInstance.3 = newValue
+    }
   }
 
   @objc public var _4: Int {
     get {
       wrappedInstance.4
+    }
+    set {
+      wrappedInstance.4 = newValue
     }
   }
 
@@ -151,11 +178,17 @@ import Foundation
     get {
       wrappedInstance.0
     }
+    set {
+      wrappedInstance.0 = newValue
+    }
   }
 
   @objc public var _1: Tuple_String_Bool {
     get {
       Tuple_String_Bool(wrappedInstance.1)
+    }
+    set {
+      wrappedInstance.1 = newValue.wrappedInstance
     }
   }
 
@@ -172,11 +205,17 @@ import Foundation
     get {
       wrappedInstance.0
     }
+    set {
+      wrappedInstance.0 = newValue
+    }
   }
 
   @objc public var _1: Tuple_String_BoolDouble {
     get {
       Tuple_String_BoolDouble(wrappedInstance.1)
+    }
+    set {
+      wrappedInstance.1 = newValue.wrappedInstance
     }
   }
 
@@ -193,17 +232,26 @@ import Foundation
     get {
       wrappedInstance.0
     }
+    set {
+      wrappedInstance.0 = newValue
+    }
   }
 
   @objc public var value: String {
     get {
       wrappedInstance.value
     }
+    set {
+      wrappedInstance.value = newValue
+    }
   }
 
   @objc public var _2: Bool {
     get {
       wrappedInstance.2
+    }
+    set {
+      wrappedInstance.2 = newValue
     }
   }
 
@@ -220,11 +268,17 @@ import Foundation
     get {
       wrappedInstance.0
     }
+    set {
+      wrappedInstance.0 = newValue
+    }
   }
 
   @objc public var _1: Bool {
     get {
       wrappedInstance.1
+    }
+    set {
+      wrappedInstance.1 = newValue
     }
   }
 
@@ -241,11 +295,17 @@ import Foundation
     get {
       wrappedInstance.0
     }
+    set {
+      wrappedInstance.0 = newValue
+    }
   }
 
   @objc public var _1: Tuple_Bool_Double {
     get {
       Tuple_Bool_Double(wrappedInstance.1)
+    }
+    set {
+      wrappedInstance.1 = newValue.wrappedInstance
     }
   }
 
@@ -262,11 +322,17 @@ import Foundation
     get {
       wrappedInstance.id
     }
+    set {
+      wrappedInstance.id = newValue
+    }
   }
 
   @objc public var name: String {
     get {
       wrappedInstance.name
+    }
+    set {
+      wrappedInstance.name = newValue
     }
   }
 
@@ -283,17 +349,26 @@ import Foundation
     get {
       wrappedInstance.x
     }
+    set {
+      wrappedInstance.x = newValue
+    }
   }
 
   @objc public var y: Int {
     get {
       wrappedInstance.y
     }
+    set {
+      wrappedInstance.y = newValue
+    }
   }
 
   @objc public var z: String {
     get {
       wrappedInstance.z
+    }
+    set {
+      wrappedInstance.z = newValue
     }
   }
 
