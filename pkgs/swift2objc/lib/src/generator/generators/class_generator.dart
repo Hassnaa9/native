@@ -160,14 +160,6 @@ List<String> _generateClassProperty(PropertyDeclaration property) {
   var prefix = prefixes.isEmpty ? '' : '${prefixes.join(' ')} ';
   var propSwiftType = property.type.swiftType;
 
-  if (property.getter == null && property.setter == null) {
-    final varOrLet = property.isConstant ? 'let' : 'var';
-    return [
-      ...generateAvailability(property),
-      'public $prefix$varOrLet ${property.name}: $propSwiftType\n',
-    ];
-  }
-
   header.write('public ${prefix}var ${property.name}: $propSwiftType {');
 
   final getterLines = [

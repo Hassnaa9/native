@@ -47,10 +47,16 @@ public class TupleTest {
     }
     
     public class NestedTupleTest {
-    public func getNestedTuple() -> (Int, (String, Bool)) {
-        return (42, ("test", true))
+        public func getNestedTuple() -> (Int, (String, Bool)) {
+            return (42, ("test", true))
+        }
     }
-}
+
+    // Test repeated nested tuples (both elements have the same tuple type)
+    public func getRepeatedNestedTuple() -> ((Int, String), (Int, String)) {
+        return ((1, "a"), (2, "b"))
+    }
+
 // TODO(https://github.com/dart-lang/native/issues/1743): Enable this when optional return types are fully supported.
 // public class OptionalTupleTest {
 //     public func getOptionalTuple() -> (Int, String)? {
