@@ -56,6 +56,22 @@ public class TupleTest {
     public func getRepeatedNestedTuple() -> ((Int, String), (Int, String)) {
         return ((1, "a"), (2, "b"))
     }
+    // Test tuple with cycle
+    public func getCircularTuple() -> (Foo, Bar)? {
+        return nil
+    }
+    
+    public class Foo {
+        public func getCycle() -> (Foo, Bar) {
+            return (self, Bar())
+        }
+    }
+    
+    public class Bar {
+        public func getCycle() -> (Foo, Bar) {
+            return (Foo(), self)
+        }
+    }
 
 // TODO(https://github.com/dart-lang/native/issues/1743): Enable this when optional return types are fully supported.
 // public class OptionalTupleTest {

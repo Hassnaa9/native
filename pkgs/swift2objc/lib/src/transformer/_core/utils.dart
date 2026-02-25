@@ -34,6 +34,7 @@ import 'unique_namer.dart';
       shouldWrapPrimitives: shouldWrapPrimitives,
     );
     return (newValue, InoutType(newType));
+  }
 
   // Handle tuple types first
   if (type is TupleType) {

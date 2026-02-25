@@ -146,9 +146,6 @@ class OptionalType extends AstNode implements ReferredType {
 
 class InoutType extends AstNode implements ReferredType {
   final ReferredType child;
-/// Describes a reference to a Swift Tuple type (e.g., `(Int, String)`).
-class TupleType extends AstNode implements ReferredType {
-  final List<TupleElement> elements;
 
   @override
   bool get isObjCRepresentable => false;
@@ -170,6 +167,22 @@ class TupleType extends AstNode implements ReferredType {
 
   @override
   void visit(Visitation visitation) => visitation.visitInoutType(this);
+
+  @override
+  void visitChildren(Visitor visitor) {
+    super.visitChildren(visitor);
+    visitor.visit(child);
+  }
+}
+
+/// Describes a reference to a Swift Tuple type (e.g., `(Int, String)`).
+class TupleType extends AstNode implements ReferredType {
+  final List<TupleElement> elements;
+
+  @override
+  bool get isObjCRepresentable => false;
+
+  @override
   String get swiftType {
     final elementStrings = elements
         .map((e) {
@@ -206,9 +219,6 @@ class TupleType extends AstNode implements ReferredType {
   @override
   void visitChildren(Visitor visitor) {
     super.visitChildren(visitor);
-    visitor.visit(child);
-  }
-}
     for (final element in elements) {
       visitor.visit(element.type);
     }

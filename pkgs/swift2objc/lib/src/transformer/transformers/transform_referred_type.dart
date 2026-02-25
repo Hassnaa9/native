@@ -72,8 +72,6 @@ DeclaredType _transformTupleType(
     state,
   );
 
-  state.tupleWrappers[signature] = wrapperClass;
-
   return wrapperClass.asDeclaredType;
 }
 
@@ -110,8 +108,6 @@ ClassDeclaration _generateTupleWrapperClass(
   UniqueNamer globalNamer,
   TransformationState state,
 ) {
-  final properties = <PropertyDeclaration>[];
-
   final wrappedInstanceProperty = PropertyDeclaration(
     id: 'tuple_${className}_wrappedInstance',
     name: 'wrappedInstance',
@@ -128,6 +124,21 @@ ClassDeclaration _generateTupleWrapperClass(
     lazy: false,
     weak: false,
   );
+
+  final wrapperClass = ClassDeclaration(
+    id: 'tuple_wrapper_$className',
+    name: className,
+    source: null,
+    availability: const [],
+    superClass: objectType,
+    wrappedInstance: wrappedInstanceProperty,
+    wrapperInitializer: buildWrapperInitializer(wrappedInstanceProperty),
+    hasObjCAnnotation: true,
+  );
+
+  state.tupleWrappers[tupleType.swiftType] = wrapperClass;
+
+  final properties = <PropertyDeclaration>[];
 
   for (var i = 0; i < tupleType.elements.length; i++) {
     final element = tupleType.elements[i];
@@ -175,15 +186,7 @@ ClassDeclaration _generateTupleWrapperClass(
     properties.add(property);
   }
 
-  return ClassDeclaration(
-    id: 'tuple_wrapper_$className',
-    name: className,
-    source: null,
-    availability: const [],
-    superClass: objectType,
-    properties: properties,
-    wrappedInstance: wrappedInstanceProperty,
-    wrapperInitializer: buildWrapperInitializer(wrappedInstanceProperty),
-    hasObjCAnnotation: true,
-  );
+  wrapperClass.properties = properties;
+
+  return wrapperClass;
 }
