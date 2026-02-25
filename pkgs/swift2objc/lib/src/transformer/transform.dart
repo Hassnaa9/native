@@ -117,10 +117,19 @@ Declaration? maybeTransformDeclaration(
   }
 
   if (declaration is InnerNestableDeclaration &&
-      declaration.nestingParent != null) {
-    // It's important that nested declarations are only transformed in the
-    // context of their parent, so that their parentNamer is correct.
-    assert(nested);
+      declaration.nestingParent != null &&
+      !nested) {
+    if (!state.map.containsKey(declaration.nestingParent!)) {
+      maybeTransformDeclaration(
+        declaration.nestingParent!,
+        parentNamer,
+        state,
+      );
+    }
+    if (state.map.containsKey(declaration)) {
+      return state.map[declaration];
+    }
+    nested = true;
   }
 
   return switch (declaration) {
