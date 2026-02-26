@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import '../../ast/_core/interfaces/declaration.dart';
+import '../../ast/_core/interfaces/nestable_declaration.dart';
 import '../../ast/_core/shared/referred_type.dart';
 import '../../ast/declarations/built_in/built_in_declaration.dart';
 import '../../ast/declarations/compounds/class_declaration.dart';
@@ -44,7 +45,14 @@ ReferredType transformReferredType(
     if (decl is TypealiasDeclaration) {
       return transformReferredType(decl.target, globalNamer, state);
     }
-    return transformDeclaration(decl, globalNamer, state).asDeclaredType;
+    final isNested =
+        decl is InnerNestableDeclaration && decl.nestingParent != null;
+    return transformDeclaration(
+      decl,
+      globalNamer,
+      state,
+      nested: isNested,
+    ).asDeclaredType;
   } else if (type is OptionalType) {
     return OptionalType(transformReferredType(type.child, globalNamer, state));
   } else {
