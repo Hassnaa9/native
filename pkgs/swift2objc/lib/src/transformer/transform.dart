@@ -129,9 +129,20 @@ Declaration? maybeTransformDeclaration(
       state,
     );
 
-    // Now that the parents are transformed, this declaration should haven been
-    // transformed, and will be in the cache.
-    return state.map[declaration]!;
+    // Now that the parents are transformed, this declaration should have been
+    // transformed, and will be in the cache. However, if the parent is
+    // mid-transformation (e.g. we're transforming a sibling nested declaration
+    // that references this one via a tuple type), the declaration may not be in
+    // the cache yet. In that case, transform it directly.
+    if (state.map.containsKey(declaration)) {
+      return state.map[declaration];
+    }
+    return maybeTransformDeclaration(
+      declaration,
+      parentNamer,
+      state,
+      nested: true,
+    );
   }
 
   return switch (declaration) {
