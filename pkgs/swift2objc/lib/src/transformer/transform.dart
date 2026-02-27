@@ -120,6 +120,7 @@ Declaration? maybeTransformDeclaration(
   if (declaration is InnerNestableDeclaration &&
       declaration.nestingParent != null &&
       !nested) {
+    // It's important that nested declarations are only transformed in the
     // context of their parent, so that their parentNamer is correct. So find
     // the top level declaration this is nested in, and transform that first.
     maybeTransformDeclaration(
