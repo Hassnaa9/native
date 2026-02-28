@@ -134,6 +134,7 @@ Declaration? maybeTransformDeclaration(
     // mid-transformation (e.g. we're transforming a sibling nested declaration
     // that references this one via a tuple type), the declaration may not be in
     // the cache yet. In that case, transform it directly.
+    // TODO(https://github.com/dart-lang/native/issues/1358): This is brittle. Switch naming to a transformer
     if (state.map.containsKey(declaration)) {
       return state.map[declaration];
     }
