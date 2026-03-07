@@ -77,6 +77,25 @@ void fillObjCInterfaceMethodsIfNeeded(
     'Name: ${itf.originalName}, ${cursor.completeStringRepr()}',
   );
 
+  // Pre-scan: collect selectors that are explicitly declared SWIFT_UNAVAILABLE
+  // in user (non-system) headers. We need this set before the main visitor
+  // loop because Clang may also visit inherited versions of those methods from
+  // system headers (e.g. NSObject.init alongside Animal.init SWIFT_UNAVAILABLE).
+  // Without the pre-scan the inherited version would slip through the filter.
+  final swiftUnavailableSelectors = <String>{};
+  cursor.visitChildren((child) {
+    if ((child.kind ==
+                clang_types.CXCursorKind.CXCursor_ObjCInstanceMethodDecl ||
+            child.kind ==
+                clang_types.CXCursorKind.CXCursor_ObjCClassMethodDecl) &&
+        !child.isInSystemHeader()) {
+      final avail = ApiAvailability.fromCursor(child, context);
+      if (avail.swiftUnavailable) {
+        swiftUnavailableSelectors.add(child.spelling());
+      }
+    }
+  });
+
   final itfDecl = Declaration(usr: itf.usr, originalName: itf.originalName);
   cursor.visitChildren((child) {
     switch (child.kind) {
@@ -99,7 +118,13 @@ void fillObjCInterfaceMethodsIfNeeded(
         break;
       case clang_types.CXCursorKind.CXCursor_ObjCInstanceMethodDecl:
       case clang_types.CXCursorKind.CXCursor_ObjCClassMethodDecl:
-        itf.addMethod(parseObjCMethod(context, child, itfDecl, objcInterfaces));
+        // Skip any selector that was explicitly marked SWIFT_UNAVAILABLE
+        // (including inherited versions of that selector from system headers).
+        if (!swiftUnavailableSelectors.contains(child.spelling())) {
+          itf.addMethod(
+            parseObjCMethod(context, child, itfDecl, objcInterfaces),
+          );
+        }
         break;
     }
   });
@@ -261,17 +286,6 @@ ObjCMethod? parseObjCMethod(
   }
 
   final apiAvailability = ApiAvailability.fromCursor(cursor, context);
-  // Only filter swift-unavailable methods that are explicitly declared in
-  // user headers (e.g. Swift-generated ObjC wrapper headers). Methods
-  // inherited from Apple's SDK (e.g. NSObject.alloc, NSObject.new) also carry
-  // the swift-unavailable annotation, but those come from system headers and
-  // should still be generated for ObjC→Dart interop.
-  if (apiAvailability.swiftUnavailable && !cursor.isInSystemHeader()) {
-    logger.info(
-      'Omitting swift-unavailable method ${itfDecl.originalName}.$methodName',
-    );
-    return null;
-  }
   if (apiAvailability.availability == Availability.none) {
     logger.info(
       'Omitting deprecated method ${itfDecl.originalName}.$methodName',
