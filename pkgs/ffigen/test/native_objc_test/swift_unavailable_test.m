@@ -11,7 +11,6 @@
 #define OBJC_DESIGNATED_INITIALIZER \
   __attribute__((objc_designated_initializer))
 
-/// Mimics what the Swift compiler emits for a class with no default init.
 @interface Animal : NSObject
 @property(nonatomic, copy) NSString* _Nonnull name;
 - (nonnull instancetype)initWithName:(NSString* _Nonnull)name

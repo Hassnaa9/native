@@ -77,17 +77,6 @@ void fillObjCInterfaceMethodsIfNeeded(
     'Name: ${itf.originalName}, ${cursor.completeStringRepr()}',
   );
 
-  // Pre-scan: collect all method selectors that are explicitly marked
-  // SWIFT_UNAVAILABLE in this interface and store them on the interface object.
-  // The code generator uses this set to:
-  //   1. Skip copying those methods from supertypes
-  //      (copy_methods_from_super_type).
-  //   2. Suppress the default `ClassName()` no-arg constructor
-  //      (objc_interface).
-  //
-  // Only runs for user (non-system) header interfaces. SDK classes such as
-  // NSObject also declare alloc/new with SWIFT_UNAVAILABLE, and we must keep
-  // those for normal ObjC→Dart interop.
   if (!cursor.isInSystemHeader()) {
     cursor.visitChildren((child) {
       final isMethodDecl =

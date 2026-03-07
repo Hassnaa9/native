@@ -69,7 +69,6 @@ void main() {
     });
 
     test('init is NOT generated (SWIFT_UNAVAILABLE)', () {
-      // Use regex to avoid matching 'initWithName'
       expect(RegExp(r"'init'\b").hasMatch(bindings), isFalse);
     });
 
@@ -78,7 +77,6 @@ void main() {
     });
 
     test('no-arg Animal() constructor is NOT generated', () {
-      // Only generated when `new` method exists - should be absent here
       expect(bindings, isNot(contains('Animal()')));
     });
   });
