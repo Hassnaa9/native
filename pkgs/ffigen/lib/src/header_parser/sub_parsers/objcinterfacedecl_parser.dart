@@ -77,29 +77,17 @@ void fillObjCInterfaceMethodsIfNeeded(
     'Name: ${itf.originalName}, ${cursor.completeStringRepr()}',
   );
 
-  // Pre-scan: collect method selectors that are SWIFT_UNAVAILABLE in this
-  // interface. Only runs when the interface itself is in a user (non-system)
-  // header, because SDK classes (e.g. NSObject) also declare alloc/new with
-  // SWIFT_UNAVAILABLE and we must keep those for normal ObjC→Dart interop.
+  // Pre-scan: collect all method selectors that are explicitly marked
+  // SWIFT_UNAVAILABLE in this interface and store them on the interface object.
+  // The code generator uses this set to:
+  //   1. Skip copying those methods from supertypes
+  //      (copy_methods_from_super_type).
+  //   2. Suppress the default `ClassName()` no-arg constructor
+  //      (objc_interface).
   //
-  // Within a user-file interface, only methods explicitly annotated with
-  // SWIFT_UNAVAILABLE in that file have swiftUnavailable=true. Inherited SDK
-  // methods (alloc, new, …from NSObject) have swiftUnavailable=false unless
-  // the user file explicitly redeclares them with SWIFT_UNAVAILABLE. So
-  // collecting all swiftUnavailable selectors is the correct discriminator.
-  //
-  // We collect in a pre-scan (not the main loop) so that BOTH the explicitly
-  // annotated cursor AND any inherited version of the same selector (which
-  // Clang may also visit) are suppressed in the main loop below.
-  // TEMP DIAGNOSTICS
-  // ignore: avoid_print
-  print(
-    'DIAG fillInterface ${itf.originalName}'
-    ' isSystemHdr=${cursor.isInSystemHeader()}'
-    ' file=${cursor.sourceFileName()}',
-  );
-
-  final swiftUnavailableSelectors = <String>{};
+  // Only runs for user (non-system) header interfaces. SDK classes such as
+  // NSObject also declare alloc/new with SWIFT_UNAVAILABLE, and we must keep
+  // those for normal ObjC→Dart interop.
   if (!cursor.isInSystemHeader()) {
     cursor.visitChildren((child) {
       final isMethodDecl =
@@ -108,14 +96,12 @@ void fillObjCInterfaceMethodsIfNeeded(
           child.kind == clang_types.CXCursorKind.CXCursor_ObjCClassMethodDecl;
       if (isMethodDecl) {
         final avail = ApiAvailability.fromCursor(child, context);
-        // ignore: avoid_print
-        print(
-          'DIAG child method ${child.spelling()}'
-          ' swiftUnavail=${avail.swiftUnavailable}'
-          ' childFile=${child.sourceFileName()}',
-        );
         if (avail.swiftUnavailable) {
-          swiftUnavailableSelectors.add(child.spelling());
+          itf.swiftUnavailableSelectors.add(child.spelling());
+          context.logger.info(
+            'Marking swift-unavailable: '
+            '${itf.originalName}.${child.spelling()}',
+          );
         }
       }
     });
@@ -143,13 +129,7 @@ void fillObjCInterfaceMethodsIfNeeded(
         break;
       case clang_types.CXCursorKind.CXCursor_ObjCInstanceMethodDecl:
       case clang_types.CXCursorKind.CXCursor_ObjCClassMethodDecl:
-        // Skip any selector that was explicitly marked SWIFT_UNAVAILABLE
-        // (including inherited versions of that selector from system headers).
-        if (!swiftUnavailableSelectors.contains(child.spelling())) {
-          itf.addMethod(
-            parseObjCMethod(context, child, itfDecl, objcInterfaces),
-          );
-        }
+        itf.addMethod(parseObjCMethod(context, child, itfDecl, objcInterfaces));
         break;
     }
   });
