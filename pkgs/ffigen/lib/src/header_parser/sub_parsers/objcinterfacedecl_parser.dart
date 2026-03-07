@@ -261,7 +261,12 @@ ObjCMethod? parseObjCMethod(
   }
 
   final apiAvailability = ApiAvailability.fromCursor(cursor, context);
-  if (apiAvailability.swiftUnavailable) {
+  // Only filter swift-unavailable methods that are explicitly declared in
+  // user headers (e.g. Swift-generated ObjC wrapper headers). Methods
+  // inherited from Apple's SDK (e.g. NSObject.alloc, NSObject.new) also carry
+  // the swift-unavailable annotation, but those come from system headers and
+  // should still be generated for ObjC→Dart interop.
+  if (apiAvailability.swiftUnavailable && !cursor.isInSystemHeader()) {
     logger.info(
       'Omitting swift-unavailable method ${itfDecl.originalName}.$methodName',
     );
