@@ -77,19 +77,22 @@ void fillObjCInterfaceMethodsIfNeeded(
     'Name: ${itf.originalName}, ${cursor.completeStringRepr()}',
   );
 
-  // Pre-scan: collect selectors that are explicitly declared SWIFT_UNAVAILABLE
-  // in user (non-system) headers. We need this set before the main visitor
-  // loop because Clang may also visit inherited versions of those methods from
-  // system headers (e.g. NSObject.init alongside Animal.init
-  // SWIFT_UNAVAILABLE). Without the pre-scan the inherited version would slip
-  // through the filter.
+  // Pre-scan: collect selectors explicitly declared SWIFT_UNAVAILABLE on THIS
+  // interface (not just inherited from NSObject). Clang may also visit
+  // inherited versions of those methods (e.g. NSObject.init alongside the
+  // explicitly redeclared Animal.init SWIFT_UNAVAILABLE), which must also be
+  // suppressed. We detect "declared on this interface" via the cursor's USR:
+  // ObjC method USRs follow the pattern `c:objc(cs)ClassName(im)selector`,
+  // so a method on Animal starts with `c:objc(cs)Animal(` while a method
+  // inherited from NSObject starts with `c:objc(cs)NSObject(`.
   final swiftUnavailableSelectors = <String>{};
+  final itfUsrPrefix = '${itf.usr}(';
   cursor.visitChildren((child) {
     final isMethodDecl =
         child.kind ==
             clang_types.CXCursorKind.CXCursor_ObjCInstanceMethodDecl ||
         child.kind == clang_types.CXCursorKind.CXCursor_ObjCClassMethodDecl;
-    if (isMethodDecl && !child.isInSystemHeader()) {
+    if (isMethodDecl && child.usr().startsWith(itfUsrPrefix)) {
       final avail = ApiAvailability.fromCursor(child, context);
       if (avail.swiftUnavailable) {
         swiftUnavailableSelectors.add(child.spelling());
