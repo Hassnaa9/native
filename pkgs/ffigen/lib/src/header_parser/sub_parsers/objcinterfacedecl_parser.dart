@@ -261,6 +261,12 @@ ObjCMethod? parseObjCMethod(
   }
 
   final apiAvailability = ApiAvailability.fromCursor(cursor, context);
+  if (apiAvailability.swiftUnavailable) {
+    logger.info(
+      'Omitting swift-unavailable method ${itfDecl.originalName}.$methodName',
+    );
+    return null;
+  }
   if (apiAvailability.availability == Availability.none) {
     logger.info(
       'Omitting deprecated method ${itfDecl.originalName}.$methodName',
