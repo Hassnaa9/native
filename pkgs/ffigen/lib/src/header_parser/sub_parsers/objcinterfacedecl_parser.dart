@@ -78,27 +78,49 @@ void fillObjCInterfaceMethodsIfNeeded(
   );
 
   // Pre-scan: collect selectors explicitly declared SWIFT_UNAVAILABLE on THIS
-  // interface (not just inherited from NSObject). Clang may also visit
-  // inherited versions of those methods (e.g. NSObject.init alongside the
-  // explicitly redeclared Animal.init SWIFT_UNAVAILABLE), which must also be
-  // suppressed. We detect "declared on this interface" via the cursor's USR:
-  // ObjC method USRs follow the pattern `c:objc(cs)ClassName(im)selector`,
-  // so a method on Animal starts with `c:objc(cs)Animal(` while a method
-  // inherited from NSObject starts with `c:objc(cs)NSObject(`.
+  // interface (not just inherited from a superclass). Clang may also visit
+  // inherited versions of those methods, which must also be suppressed.
+  //
+  // We detect "declared on this interface" via the cursor's USR. ObjC method
+  // USRs follow the pattern `c:objc(cs)ClassName(im)selector`, so a method
+  // explicitly declared on Animal has a USR starting with `c:objc(cs)Animal(`
+  // while an inherited NSObject method starts with `c:objc(cs)NSObject(`.
+  // This is more reliable than isInSystemHeader(), which can return true even
+  // for methods redeclared in user files if Clang resolves to the canonical
+  // definition in a system header.
+  // Pre-scan: collect method selectors that are explicitly declared
+  // SWIFT_UNAVAILABLE in this interface. Only applies when the interface
+  // itself is declared in a user (non-system) header; SDK classes like NSObject
+  // declare alloc/new with SWIFT_UNAVAILABLE too, but we must keep those for
+  // normal ObjC→Dart interop.
+  //
+  // If the interface IS in a system header, swiftUnavailableSelectors stays
+  // empty and no methods are filtered below.
   final swiftUnavailableSelectors = <String>{};
-  final itfUsrPrefix = '${itf.usr}(';
-  cursor.visitChildren((child) {
-    final isMethodDecl =
-        child.kind ==
-            clang_types.CXCursorKind.CXCursor_ObjCInstanceMethodDecl ||
-        child.kind == clang_types.CXCursorKind.CXCursor_ObjCClassMethodDecl;
-    if (isMethodDecl && child.usr().startsWith(itfUsrPrefix)) {
-      final avail = ApiAvailability.fromCursor(child, context);
-      if (avail.swiftUnavailable) {
-        swiftUnavailableSelectors.add(child.spelling());
+  if (!cursor.isInSystemHeader()) {
+    // The interface is in a user file (e.g. a Swift-generated ObjC wrapper
+    // header). Collect the selectors that are explicitly SWIFT_UNAVAILABLE
+    // on this specific interface (not inherited from a superclass) so that
+    // both the explicit declaration and any inherited version of the same
+    // selector are suppressed in the main loop below.
+    final itfUsrPrefix = '${itf.usr}(';
+    cursor.visitChildren((child) {
+      final isMethodDecl =
+          child.kind ==
+              clang_types.CXCursorKind.CXCursor_ObjCInstanceMethodDecl ||
+          child.kind == clang_types.CXCursorKind.CXCursor_ObjCClassMethodDecl;
+      if (isMethodDecl && child.usr().startsWith(itfUsrPrefix)) {
+        final avail = ApiAvailability.fromCursor(child, context);
+        if (avail.swiftUnavailable) {
+          swiftUnavailableSelectors.add(child.spelling());
+          context.logger.info(
+            'Will omit swift-unavailable method '
+            '${itf.originalName}.${child.spelling()}',
+          );
+        }
       }
-    }
-  });
+    });
+  }
 
   final itfDecl = Declaration(usr: itf.usr, originalName: itf.originalName);
   cursor.visitChildren((child) {
