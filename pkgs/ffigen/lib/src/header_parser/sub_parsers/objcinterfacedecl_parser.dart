@@ -80,15 +80,16 @@ void fillObjCInterfaceMethodsIfNeeded(
   // Pre-scan: collect selectors that are explicitly declared SWIFT_UNAVAILABLE
   // in user (non-system) headers. We need this set before the main visitor
   // loop because Clang may also visit inherited versions of those methods from
-  // system headers (e.g. NSObject.init alongside Animal.init SWIFT_UNAVAILABLE).
-  // Without the pre-scan the inherited version would slip through the filter.
+  // system headers (e.g. NSObject.init alongside Animal.init
+  // SWIFT_UNAVAILABLE). Without the pre-scan the inherited version would slip
+  // through the filter.
   final swiftUnavailableSelectors = <String>{};
   cursor.visitChildren((child) {
-    if ((child.kind ==
-                clang_types.CXCursorKind.CXCursor_ObjCInstanceMethodDecl ||
-            child.kind ==
-                clang_types.CXCursorKind.CXCursor_ObjCClassMethodDecl) &&
-        !child.isInSystemHeader()) {
+    final isMethodDecl =
+        child.kind ==
+            clang_types.CXCursorKind.CXCursor_ObjCInstanceMethodDecl ||
+        child.kind == clang_types.CXCursorKind.CXCursor_ObjCClassMethodDecl;
+    if (isMethodDecl && !child.isInSystemHeader()) {
       final avail = ApiAvailability.fromCursor(child, context);
       if (avail.swiftUnavailable) {
         swiftUnavailableSelectors.add(child.spelling());
