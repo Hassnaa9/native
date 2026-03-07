@@ -91,6 +91,14 @@ void fillObjCInterfaceMethodsIfNeeded(
   // We collect in a pre-scan (not the main loop) so that BOTH the explicitly
   // annotated cursor AND any inherited version of the same selector (which
   // Clang may also visit) are suppressed in the main loop below.
+  // TEMP DIAGNOSTICS
+  // ignore: avoid_print
+  print(
+    'DIAG fillInterface ${itf.originalName}'
+    ' isSystemHdr=${cursor.isInSystemHeader()}'
+    ' file=${cursor.sourceFileName()}',
+  );
+
   final swiftUnavailableSelectors = <String>{};
   if (!cursor.isInSystemHeader()) {
     cursor.visitChildren((child) {
@@ -100,12 +108,14 @@ void fillObjCInterfaceMethodsIfNeeded(
           child.kind == clang_types.CXCursorKind.CXCursor_ObjCClassMethodDecl;
       if (isMethodDecl) {
         final avail = ApiAvailability.fromCursor(child, context);
+        // ignore: avoid_print
+        print(
+          'DIAG child method ${child.spelling()}'
+          ' swiftUnavail=${avail.swiftUnavailable}'
+          ' childFile=${child.sourceFileName()}',
+        );
         if (avail.swiftUnavailable) {
           swiftUnavailableSelectors.add(child.spelling());
-          context.logger.info(
-            'Will omit swift-unavailable method '
-            '${itf.originalName}.${child.spelling()}',
-          );
         }
       }
     });
