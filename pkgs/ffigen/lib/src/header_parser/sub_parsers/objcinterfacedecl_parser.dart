@@ -77,6 +77,11 @@ void fillObjCInterfaceMethodsIfNeeded(
     'Name: ${itf.originalName}, ${cursor.completeStringRepr()}',
   );
 
+  print(
+    'DIAG fillCheck ${itf.originalName} '
+    'isSystemHdr=${cursor.isInSystemHeader()} '
+    'file=${cursor.sourceFileName()}',
+  );
   if (!cursor.isInSystemHeader()) {
     cursor.visitChildren((child) {
       final isMethodDecl =
