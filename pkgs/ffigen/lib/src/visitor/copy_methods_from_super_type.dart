@@ -66,8 +66,7 @@ class CopyMethodsFromSuperTypesVisitation extends Visitation {
             '${node.swiftUnavailableSelectors}',
           );
           node.addMethod(m);
-        } else if (ObjCBuiltInFunctions.isInstanceType(m.returnType) &&
-            !node.swiftUnavailableSelectors.contains(m.originalName)) {
+        } else if (ObjCBuiltInFunctions.isInstanceType(m.returnType)) {
           // ignore: avoid_print
           print(
             'DIAG COPY instanceType ${node.originalName}.'
