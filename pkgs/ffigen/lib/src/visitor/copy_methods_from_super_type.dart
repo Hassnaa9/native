@@ -59,14 +59,20 @@ class CopyMethodsFromSuperTypesVisitation extends Visitation {
         } else if (m.isClassMethod &&
             !_excludedNSObjectMethods.contains(m.originalName) &&
             !node.swiftUnavailableSelectors.contains(m.originalName)) {
+          // ignore: avoid_print
           print(
-            'DIAG COPY classMethod ${node.originalName}.${m.originalName} swiftUnavailSelectors=${node.swiftUnavailableSelectors}',
+            'DIAG COPY classMethod ${node.originalName}.'
+            '${m.originalName} swiftUnavailSelectors='
+            '${node.swiftUnavailableSelectors}',
           );
           node.addMethod(m);
         } else if (ObjCBuiltInFunctions.isInstanceType(m.returnType) &&
             !node.swiftUnavailableSelectors.contains(m.originalName)) {
+          // ignore: avoid_print
           print(
-            'DIAG COPY instanceType ${node.originalName}.${m.originalName} swiftUnavailSelectors=${node.swiftUnavailableSelectors}',
+            'DIAG COPY instanceType ${node.originalName}.'
+            '${m.originalName} swiftUnavailSelectors='
+            '${node.swiftUnavailableSelectors}',
           );
           node.addMethod(m);
         }

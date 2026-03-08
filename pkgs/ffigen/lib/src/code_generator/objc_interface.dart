@@ -27,10 +27,6 @@ class ObjCInterface extends BindingType with ObjCMethods, HasLocalScope {
   final ApiAvailability apiAvailability;
   final Set<String> swiftUnavailableSelectors = {};
 
-  /// Selectors explicitly marked SWIFT_UNAVAILABLE on this interface.
-  /// Populated by the header parser pre-scan.
-  final Set<String> swiftUnavailableSelectors = {};
-
   // Filled by ListBindingsVisitation.
   bool generateAsStub = false;
 

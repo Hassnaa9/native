@@ -20,7 +20,6 @@ class ApiAvailability {
   final bool swiftUnavailable;
   final PlatformAvailability? ios;
   final PlatformAvailability? macos;
-  final bool swiftUnavailable;
 
   late final Availability availability;
 
@@ -30,7 +29,6 @@ class ApiAvailability {
     this.swiftUnavailable = false,
     this.ios,
     this.macos,
-    this.swiftUnavailable = false,
     required ExternalVersions? externalVersions,
   }) {
     availability = _getAvailability(externalVersions);
@@ -94,10 +92,9 @@ class ApiAvailability {
     final api = ApiAvailability(
       alwaysDeprecated: alwaysDeprecated.value != 0,
       alwaysUnavailable: alwaysUnavailable.value != 0,
-      swiftUnavailable: swiftUnavailable,
+      swiftUnavailable: swiftIsUnavailable,
       ios: ios,
       macos: macos,
-      swiftUnavailable: swiftIsUnavailable,
       externalVersions: context.config.objectiveC?.externalVersions,
     );
 
