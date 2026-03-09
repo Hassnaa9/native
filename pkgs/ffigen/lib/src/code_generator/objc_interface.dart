@@ -169,9 +169,7 @@ ${generateInstanceMethodBindings(w, this)}
               m.originalName == 'new',
         )
         .firstOrNull;
-    if (newMethod != null &&
-        originalName != 'NSString' &&
-        !swiftUnavailableSelectors.contains('new')) {
+    if (newMethod != null && originalName != 'NSString') {
       s.write('''
   /// Returns a new instance of $name constructed with the default `new` method.
   $name() : this.as(${newMethod.name}().object\$);
