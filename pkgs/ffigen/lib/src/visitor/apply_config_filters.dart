@@ -46,7 +46,8 @@ class ApplyConfigFiltersVisitation extends Visitation {
     if (objcInterfaces == null) return;
 
     node.filterMethods(
-      (m) => !m.unavailable && objcInterfaces.includeMember(node, m.originalName),
+      (m) =>
+          !m.unavailable && objcInterfaces.includeMember(node, m.originalName),
     );
     _visitImpl(node, objcInterfaces);
 
