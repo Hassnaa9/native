@@ -17,6 +17,7 @@ enum Availability { none, some, all }
 class ApiAvailability {
   final bool alwaysDeprecated;
   final bool alwaysUnavailable;
+  final bool swiftUnavailable;
   final PlatformAvailability? ios;
   final PlatformAvailability? macos;
 
@@ -25,6 +26,7 @@ class ApiAvailability {
   ApiAvailability({
     this.alwaysDeprecated = false,
     this.alwaysUnavailable = false,
+    this.swiftUnavailable = false,
     this.ios,
     this.macos,
     required ExternalVersions? externalVersions,
@@ -93,7 +95,8 @@ class ApiAvailability {
 
     final api = ApiAvailability(
       alwaysDeprecated: alwaysDeprecated.value != 0,
-      alwaysUnavailable: alwaysUnavailable.value != 0 || swiftIsUnavailable,
+      alwaysUnavailable: alwaysUnavailable.value != 0,
+      swiftUnavailable: swiftIsUnavailable,
       ios: ios,
       macos: macos,
       externalVersions: context.config.objectiveC?.externalVersions,

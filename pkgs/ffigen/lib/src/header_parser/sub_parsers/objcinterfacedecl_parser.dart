@@ -153,7 +153,8 @@ void _parseSuperType(
   final fieldType = cursor.type().toCodeGenType(context);
 
   final apiAvailability = ApiAvailability.fromCursor(cursor, context);
-  if (apiAvailability.availability == Availability.none) {
+  if (apiAvailability.availability == Availability.none &&
+      !apiAvailability.alwaysUnavailable) {
     context.logger.info(
       'Omitting deprecated property ${decl.originalName}.$fieldName',
     );
@@ -260,7 +261,8 @@ ObjCMethod? parseObjCMethod(
   }
 
   final apiAvailability = ApiAvailability.fromCursor(cursor, context);
-  if (apiAvailability.availability == Availability.none) {
+  if (apiAvailability.availability == Availability.none &&
+      !apiAvailability.alwaysUnavailable) {
     logger.info(
       'Omitting deprecated method ${itfDecl.originalName}.$methodName',
     );
