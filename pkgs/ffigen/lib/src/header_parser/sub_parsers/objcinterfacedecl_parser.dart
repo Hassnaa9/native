@@ -152,7 +152,11 @@ void _parseSuperType(
   final fieldName = cursor.spelling();
   final fieldType = cursor.type().toCodeGenType(context);
 
-  final apiAvailability = ApiAvailability.fromCursor(cursor, context);
+  final apiAvailability = ApiAvailability.fromCursor(
+    cursor,
+    context,
+    treatSwiftUnavailableAsUnavailable: !cursor.isInSystemHeader(),
+  );
   if (apiAvailability.availability == Availability.none &&
       !apiAvailability.alwaysUnavailable) {
     context.logger.info(
@@ -260,7 +264,11 @@ ObjCMethod? parseObjCMethod(
     return null;
   }
 
-  final apiAvailability = ApiAvailability.fromCursor(cursor, context);
+  final apiAvailability = ApiAvailability.fromCursor(
+    cursor,
+    context,
+    treatSwiftUnavailableAsUnavailable: !cursor.isInSystemHeader(),
+  );
   if (apiAvailability.availability == Availability.none &&
       !apiAvailability.alwaysUnavailable) {
     logger.info(
