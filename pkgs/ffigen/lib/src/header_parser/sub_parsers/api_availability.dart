@@ -34,8 +34,9 @@ class ApiAvailability {
 
   static ApiAvailability fromCursor(
     clang_types.CXCursor cursor,
-    Context context,
-  ) {
+    Context context, {
+    bool treatSwiftUnavailableAsUnavailable = false,
+  }) {
     final platformsLength = clang.clang_getCursorPlatformAvailability(
       cursor,
       nullptr,
@@ -82,7 +83,10 @@ class ApiAvailability {
           macos = platformAvailability..name = 'macOS';
           break;
         case 'swift':
-          if (platformAvailability.unavailable) swiftIsUnavailable = true;
+          if (platformAvailability.unavailable &&
+              treatSwiftUnavailableAsUnavailable) {
+            swiftIsUnavailable = true;
+          }
           break;
       }
     }
