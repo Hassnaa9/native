@@ -51,32 +51,7 @@ class CopyMethodsFromSuperTypesVisitation extends Visitation {
     //  - Methods that return instancetype, because the subclass's copy of the
     //    method needs to return the subclass, not the super class.
     //    Note: instancetype is only allowed as a return type, not an arg type.
-    final superType = node.superType;
-    if (superType != null) {
-      for (final m in superType.methods) {
-        if (isNSObject) {
-          node.addMethod(m);
-        } else if (m.isClassMethod &&
-            !_excludedNSObjectMethods.contains(m.originalName) &&
-            !node.swiftUnavailableSelectors.contains(m.originalName)) {
-          // ignore: avoid_print
-          print(
-            'DIAG COPY classMethod ${node.originalName}.'
-            '${m.originalName} swiftUnavailSelectors='
-            '${node.swiftUnavailableSelectors}',
-          );
-          node.addMethod(m);
-        } else if (ObjCBuiltInFunctions.isInstanceType(m.returnType)) {
-          // ignore: avoid_print
-          print(
-            'DIAG COPY instanceType ${node.originalName}.'
-            '${m.originalName} swiftUnavailSelectors='
-            '${node.swiftUnavailableSelectors}',
-          );
-          node.addMethod(m);
-        }
-      }
-    }
+   
 
     // Copy all methods from all the interface's protocols.
     _copyMethodFromProtocols(node, node.protocols, node.addMethod);
