@@ -4,6 +4,7 @@
 
 import '../code_generator.dart';
 import '../config_provider/config.dart' show Config, Declarations;
+import '../header_parser/sub_parsers/api_availability.dart';
 
 import 'ast.dart';
 
