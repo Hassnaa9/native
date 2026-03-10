@@ -85,7 +85,7 @@ class ApiAvailability {
         case 'swift':
           if (platformAvailability.unavailable &&
               treatSwiftUnavailableAsUnavailable) {
-            alwaysUnavailable = true;
+            swiftIsUnavailable = true;
           }
           break;
       }
@@ -93,7 +93,7 @@ class ApiAvailability {
 
     final api = ApiAvailability(
       alwaysDeprecated: alwaysDeprecated.value != 0,
-      alwaysUnavailable: alwaysUnavailable.value != 0,
+      alwaysUnavailable: alwaysUnavailable.value != 0 || swiftIsUnavailable,
       ios: ios,
       macos: macos,
       externalVersions: context.config.objectiveC?.externalVersions,
