@@ -157,12 +157,12 @@ void _parseSuperType(
     context,
     treatSwiftUnavailableAsUnavailable: !cursor.isInSystemHeader(),
   );
-  if (apiAvailability.availability == Availability.none) {
-    context.logger.info(
-      'Omitting deprecated property ${decl.originalName}.$fieldName',
-    );
-    return (null, null);
-  }
+  // if (apiAvailability.availability == Availability.none) {
+  //   context.logger.info(
+  //     'Omitting deprecated property ${decl.originalName}.$fieldName',
+  //   );
+  //   return (null, null);
+  // }
   if (fieldType.isIncompleteCompound) {
     context.logger.warning(
       'Property "$fieldName" in instance "${decl.originalName}" '
@@ -268,12 +268,12 @@ ObjCMethod? parseObjCMethod(
     context,
     treatSwiftUnavailableAsUnavailable: !cursor.isInSystemHeader(),
   );
-  if (apiAvailability.availability == Availability.none) {
-    logger.info(
-      'Omitting deprecated method ${itfDecl.originalName}.$methodName',
-    );
-    return null;
-  }
+  // if (apiAvailability.availability == Availability.none) {
+  //   logger.info(
+  //     'Omitting deprecated method ${itfDecl.originalName}.$methodName',
+  //   );
+  //   return null;
+  // }
   logger.fine(
     '       > ${isClassMethod ? 'Class' : 'Instance'} method: '
     '$methodName ${cursor.completeStringRepr()}',
