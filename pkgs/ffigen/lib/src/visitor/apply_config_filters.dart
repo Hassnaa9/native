@@ -4,7 +4,6 @@
 
 import '../code_generator.dart';
 import '../config_provider/config.dart' show Config, Declarations;
-import '../header_parser/sub_parsers/api_availability.dart';
 
 import 'ast.dart';
 
@@ -48,8 +47,7 @@ class ApplyConfigFiltersVisitation extends Visitation {
 
     node.filterMethods(
       (m) =>
-          m.apiAvailability.availability != Availability.none &&
-          objcInterfaces.includeMember(node, m.originalName),
+          !m.unavailable && objcInterfaces.includeMember(node, m.originalName),
     );
     _visitImpl(node, objcInterfaces);
 
