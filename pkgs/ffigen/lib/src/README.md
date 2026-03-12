@@ -39,4 +39,3 @@ The Header Parser parses C header files and converts them into a `Library` objec
 The Code Generator generates the actual string bindings.
 - Code generator handles all external name collisions, while internal name conflicts are handled by each specific `Binding`.
 - Code Generator also handles how workarounds for arrays and bools are generated.
-//test
