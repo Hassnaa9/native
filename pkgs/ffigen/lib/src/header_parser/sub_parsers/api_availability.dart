@@ -120,7 +120,7 @@ class ApiAvailability {
       return Availability.all;
     }
 
-    if (alwaysDeprecated || alwaysUnavailable) {
+    if (alwaysDeprecated) {
       return Availability.none;
     }
 
