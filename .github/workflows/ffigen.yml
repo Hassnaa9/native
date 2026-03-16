@@ -10,7 +10,6 @@ on:
       - 'pkgs/ffigen/**'
       - 'pkgs/objective_c/**'
   pull_request:
-    branches: [main]
     paths:
       - '.github/workflows/ffigen.yml'
       - 'pkgs/ffigen/**'
