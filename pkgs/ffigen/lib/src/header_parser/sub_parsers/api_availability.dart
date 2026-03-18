@@ -112,20 +112,21 @@ class ApiAvailability {
         case 'swift':
           if (platformAvailability.unavailable) {
             cursor.visitChildren((child) {
-              if (child.kind == 400) {
-                // UnexposedAttr
-                final file = child.sourceFileName();
-                final offset = child.sourceFileOffset();
-                try {
-                  final source = File(file).readAsStringSync();
-                  if (offset < source.length) {
-                    print(
-                      'Swift attr text: \n'
-                      '${source.substring(offset, offset + 50)}',
-                    );
-                  }
-                } catch (_) {}
-              }
+              print(
+                'Child kind: ${child.kind},\n'
+                'text: ${child.sourceFileName()}:${child.sourceFileOffset()}',
+              );
+              final file = child.sourceFileName();
+              final offset = child.sourceFileOffset();
+              try {
+                final source = File(file).readAsStringSync();
+                if (offset < source.length) {
+                  print(
+                    'Swift child text: \n'
+                    '${source.substring(offset, offset + 30)}',
+                  );
+                }
+              } catch (_) {}
             });
             swiftIsUnavailable = true;
           }
