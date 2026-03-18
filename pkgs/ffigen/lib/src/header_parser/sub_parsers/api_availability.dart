@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ffi';
-import 'dart:io';
+// import 'dart:io';
 
 import 'package:ffi/ffi.dart';
 import 'package:meta/meta.dart';
@@ -92,7 +92,7 @@ class ApiAvailability {
 
     PlatformAvailability? ios;
     PlatformAvailability? macos;
-    var swiftIsUnavailable = false;
+    // var swiftIsUnavailable = false;
 
     for (var i = 0; i < platformsLength; ++i) {
       final platform = platforms[i];
@@ -110,33 +110,17 @@ class ApiAvailability {
           macos = platformAvailability..name = 'macOS';
           break;
         case 'swift':
-          if (platformAvailability.unavailable) {
-            cursor.visitChildren((child) {
-              print(
-                'Child kind: ${child.kind},\n'
-                'text: ${child.sourceFileName()}:${child.sourceFileOffset()}',
-              );
-              final file = child.sourceFileName();
-              final offset = child.sourceFileOffset();
-              try {
-                final source = File(file).readAsStringSync();
-                if (offset < source.length) {
-                  print(
-                    'Swift child text: \n'
-                    '${source.substring(offset, offset + 30)}',
-                  );
-                }
-              } catch (_) {}
-            });
-            swiftIsUnavailable = true;
-          }
+          print(
+            'Found swift platform: ${cursor.spelling()} '
+            'unavailable: ${platformAvailability.unavailable}',
+          );
           break;
       }
     }
 
     final api = ApiAvailability(
       alwaysDeprecated: alwaysDeprecated.value != 0,
-      alwaysUnavailable: alwaysUnavailable.value != 0 || swiftIsUnavailable,
+      alwaysUnavailable: alwaysUnavailable.value != 0,
       ios: ios,
       macos: macos,
       externalVersions: context.config.objectiveC?.externalVersions,
