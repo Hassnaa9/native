@@ -32,32 +32,32 @@ class ApiAvailability {
   }) {
     availability = _getAvailability(externalVersions);
   }
-  static bool _isTrueSwiftUnavailable(clang_types.CXCursor cursor) {
-    var found = false;
-    cursor.visitChildren((child) {
-      if (child.kind == 400) {
-        // UnexposedAttr
-        final file = child.sourceFileName();
-        final offset = child.sourceFileOffset();
-        try {
-          final source = File(file).readAsStringSync();
-          if (offset < source.length) {
-            final text = source.substring(offset);
-            // Match SWIFT_UNAVAILABLE but not OBJC_SWIFT_UNAVAILABLE
-            if (text.startsWith('SWIFT_UNAVAILABLE') &&
-                (offset == 0 ||
-                    !source
-                        .substring(0, offset)
-                        .trimRight()
-                        .endsWith('OBJC_'))) {
-              found = true;
-            }
-          }
-        } catch (_) {}
-      }
-    });
-    return found;
-  }
+  // static bool _isTrueSwiftUnavailable(clang_types.CXCursor cursor) {
+  //   var found = false;
+  //   cursor.visitChildren((child) {
+  //     if (child.kind == 400) {
+  //       // UnexposedAttr
+  //       final file = child.sourceFileName();
+  //       final offset = child.sourceFileOffset();
+  //       try {
+  //         final source = File(file).readAsStringSync();
+  //         if (offset < source.length) {
+  //           final text = source.substring(offset);
+  //           // Match SWIFT_UNAVAILABLE but not OBJC_SWIFT_UNAVAILABLE
+  //           if (text.startsWith('SWIFT_UNAVAILABLE') &&
+  //               (offset == 0 ||
+  //                   !source
+  //                       .substring(0, offset)
+  //                       .trimRight()
+  //                       .endsWith('OBJC_'))) {
+  //             found = true;
+  //           }
+  //         }
+  //       } catch (_) {}
+  //     }
+  //   });
+  //   return found;
+  // }
 
   static ApiAvailability fromCursor(
     clang_types.CXCursor cursor,
@@ -120,7 +120,8 @@ class ApiAvailability {
                   final source = File(file).readAsStringSync();
                   if (offset < source.length) {
                     print(
-                      'Swift attr text: ${source.substring(offset, offset + 50)}',
+                      'Swift attr text: \n'
+                      '${source.substring(offset, offset + 50)}',
                     );
                   }
                 } catch (_) {}
