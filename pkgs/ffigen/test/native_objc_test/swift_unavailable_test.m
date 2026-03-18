@@ -18,3 +18,11 @@
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
+
+#define OBJC_SWIFT_UNAVAILABLE(msg) \
+  __attribute__((availability(swift, unavailable, message=msg)))
+
+@interface Plant : NSObject
+- (nonnull instancetype)init OBJC_SWIFT_UNAVAILABLE("use object initializers instead");
++ (nonnull instancetype)new OBJC_SWIFT_UNAVAILABLE("use object initializers instead");
+@end

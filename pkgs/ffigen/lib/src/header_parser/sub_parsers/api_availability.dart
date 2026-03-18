@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:ffi/ffi.dart';
 import 'package:meta/meta.dart';
@@ -31,12 +32,38 @@ class ApiAvailability {
   }) {
     availability = _getAvailability(externalVersions);
   }
+  static bool _isTrueSwiftUnavailable(clang_types.CXCursor cursor) {
+    var found = false;
+    cursor.visitChildren((child) {
+      if (child.kind == 400) {
+        // UnexposedAttr
+        final file = child.sourceFileName();
+        final offset = child.sourceFileOffset();
+        try {
+          final source = File(file).readAsStringSync();
+          if (offset < source.length) {
+            final text = source.substring(offset);
+            // Match SWIFT_UNAVAILABLE but not OBJC_SWIFT_UNAVAILABLE
+            if (text.startsWith('SWIFT_UNAVAILABLE') &&
+                (offset == 0 ||
+                    !source
+                        .substring(0, offset)
+                        .trimRight()
+                        .endsWith('OBJC_'))) {
+              found = true;
+            }
+          }
+        } catch (_) {}
+      }
+    });
+    return found;
+  }
 
   static ApiAvailability fromCursor(
     clang_types.CXCursor cursor,
-    Context context, {
-    bool treatSwiftUnavailableAsUnavailable = false,
-  }) {
+    Context context,
+    // { bool treatSwiftUnavailableAsUnavailable = false,}
+  ) {
     final platformsLength = clang.clang_getCursorPlatformAvailability(
       cursor,
       nullptr,
@@ -83,8 +110,22 @@ class ApiAvailability {
           macos = platformAvailability..name = 'macOS';
           break;
         case 'swift':
-          if (platformAvailability.unavailable &&
-              treatSwiftUnavailableAsUnavailable) {
+          if (platformAvailability.unavailable) {
+            cursor.visitChildren((child) {
+              if (child.kind == 400) {
+                // UnexposedAttr
+                final file = child.sourceFileName();
+                final offset = child.sourceFileOffset();
+                try {
+                  final source = File(file).readAsStringSync();
+                  if (offset < source.length) {
+                    print(
+                      'Swift attr text: ${source.substring(offset, offset + 50)}',
+                    );
+                  }
+                } catch (_) {}
+              }
+            });
             swiftIsUnavailable = true;
           }
           break;
@@ -110,7 +151,7 @@ class ApiAvailability {
   }
 
   Availability _getAvailability(ExternalVersions? externalVersions) {
-    if (alwaysUnavailable || alwaysDeprecated) return Availability.none;
+    if (alwaysUnavailable) return Availability.none;
 
     final macosVer = _normalizeVersions(externalVersions?.macos);
     final iosVer = _normalizeVersions(externalVersions?.ios);
@@ -118,6 +159,10 @@ class ApiAvailability {
     // If no versions are specified, everything is available.
     if (iosVer == null && macosVer == null) {
       return Availability.all;
+    }
+
+    if (alwaysDeprecated) {
+      return Availability.none;
     }
 
     Availability? availability_;
