@@ -116,6 +116,7 @@ class ApiAvailability {
                 final extent = child.extent;
                 final tuple = extent.toTuple();
                 print('Swift attr toTuple: $tuple');
+                print('Swift attr text: ${child.extent.readSourceText()}');
               }
             });
             // swiftIsUnavailable = true;
