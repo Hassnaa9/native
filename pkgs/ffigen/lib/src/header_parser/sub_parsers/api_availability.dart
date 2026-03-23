@@ -109,18 +109,17 @@ class ApiAvailability {
         case 'macos':
           macos = platformAvailability..name = 'macOS';
           break;
-       case 'swift':
-  if (platformAvailability.unavailable) {
-    cursor.visitChildren((child) {
-      if (child.kind() == 400) {
-        final extent = child.extent;
-        final tuple = extent.toTuple();
-        print('Swift attr toTuple: $tuple');
-      }
-    });
-    swiftIsUnavailable = true;
-  }
-  break;
+        case 'swift':
+          if (platformAvailability.unavailable) {
+            cursor.visitChildren((child) {
+              if (child.kind == 400) {
+                final extent = child.extent;
+                final tuple = extent.toTuple();
+                print('Swift attr toTuple: $tuple');
+              }
+            });
+            // swiftIsUnavailable = true;
+          }
           break;
       }
     }
