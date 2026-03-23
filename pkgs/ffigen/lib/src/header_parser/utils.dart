@@ -80,7 +80,6 @@ extension CXSourceRangeExt on clang_types.CXSourceRange {
   clang_types.CXSourceLocation get end => clang.clang_getRangeEnd(this);
   ((String, int), (String, int)) toTuple() =>
       (start.fileAndOffset, end.fileAndOffset);
-  // Read the source text between start and end offsets
   String? readSourceText() {
     final ((file, startOffset), (_, endOffset)) = toTuple();
     try {
@@ -289,7 +288,6 @@ extension CXCursorExt on clang_types.CXCursor {
     visitChildren((child) => child._printAst(maxDepth, depth + 1));
   }
 
-  // In CXCursorExt:
   clang_types.CXSourceRange get extent => clang.clang_getCursorExtent(this);
 }
 

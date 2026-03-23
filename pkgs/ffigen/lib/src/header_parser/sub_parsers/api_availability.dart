@@ -146,6 +146,19 @@ class ApiAvailability {
   static Availability _mergeAvailability(Availability? x, Availability y) =>
       x == null ? y : (x == y ? x : Availability.some);
 
+  static bool _hasSwiftUnavailableMacro(clang_types.CXCursor cursor) {
+    var found = false;
+    cursor.visitChildren((child) {
+      if (child.kind == 400) {
+        final text = child.extent.readSourceText() ?? '';
+        if (text.startsWith('SWIFT_UNAVAILABLE')) {
+          found = true;
+        }
+      }
+    });
+    return found;
+  }
+
   List<PlatformAvailability> get _platforms => [ios, macos].nonNulls.toList();
 
   String? get dartDoc {
@@ -170,20 +183,6 @@ class ApiAvailability {
   ios: $ios
   macos: $macos
 }''';
-
-  static bool _hasSwiftUnavailableMacro(clang_types.CXCursor cursor) {
-    var found = false;
-    cursor.visitChildren((child) {
-      if (child.kind == 400) {
-        // UnexposedAttr
-        final text = child.extent.readSourceText() ?? '';
-        if (text.startsWith('SWIFT_UNAVAILABLE')) {
-          found = true;
-        }
-      }
-    });
-    return found;
-  }
 }
 
 class PlatformAvailability {
