@@ -32,37 +32,11 @@ class ApiAvailability {
   }) {
     availability = _getAvailability(externalVersions);
   }
-  // static bool _isTrueSwiftUnavailable(clang_types.CXCursor cursor) {
-  //   var found = false;
-  //   cursor.visitChildren((child) {
-  //     if (child.kind == 400) {
-  //       // UnexposedAttr
-  //       final file = child.sourceFileName();
-  //       final offset = child.sourceFileOffset();
-  //       try {
-  //         final source = File(file).readAsStringSync();
-  //         if (offset < source.length) {
-  //           final text = source.substring(offset);
-  //           // Match SWIFT_UNAVAILABLE but not OBJC_SWIFT_UNAVAILABLE
-  //           if (text.startsWith('SWIFT_UNAVAILABLE') &&
-  //               (offset == 0 ||
-  //                   !source
-  //                       .substring(0, offset)
-  //                       .trimRight()
-  //                       .endsWith('OBJC_'))) {
-  //             found = true;
-  //           }
-  //         }
-  //       } catch (_) {}
-  //     }
-  //   });
-  //   return found;
-  // }
+
 
   static ApiAvailability fromCursor(
     clang_types.CXCursor cursor,
     Context context,
-    // { bool treatSwiftUnavailableAsUnavailable = false,}
   ) {
     final platformsLength = clang.clang_getCursorPlatformAvailability(
       cursor,
@@ -92,7 +66,7 @@ class ApiAvailability {
 
     PlatformAvailability? ios;
     PlatformAvailability? macos;
-    // var swiftIsUnavailable = false;
+    var swiftIsUnavailable = false;
 
     for (var i = 0; i < platformsLength; ++i) {
       final platform = platforms[i];
@@ -110,16 +84,9 @@ class ApiAvailability {
           macos = platformAvailability..name = 'macOS';
           break;
         case 'swift':
-          if (platformAvailability.unavailable) {
-            cursor.visitChildren((child) {
-              if (child.kind == 400) {
-                final extent = child.extent;
-                final tuple = extent.toTuple();
-                print('Swift attr toTuple: $tuple');
-                print('Swift attr text: ${child.extent.readSourceText()}');
-              }
-            });
-            // swiftIsUnavailable = true;
+          if (platformAvailability.unavailable &&
+              _hasSwiftUnavailableMacro(cursor)) {
+            swiftIsUnavailable = true;
           }
           break;
       }
@@ -127,7 +94,7 @@ class ApiAvailability {
 
     final api = ApiAvailability(
       alwaysDeprecated: alwaysDeprecated.value != 0,
-      alwaysUnavailable: alwaysUnavailable.value != 0,
+      alwaysUnavailable: alwaysUnavailable.value != 0 || swiftIsUnavailable,
       ios: ios,
       macos: macos,
       externalVersions: context.config.objectiveC?.externalVersions,
@@ -204,6 +171,20 @@ class ApiAvailability {
   ios: $ios
   macos: $macos
 }''';
+
+  static bool _hasSwiftUnavailableMacro(clang_types.CXCursor cursor) {
+    var found = false;
+    cursor.visitChildren((child) {
+      if (child.kind == 400) {
+        // UnexposedAttr
+        final text = child.extent.readSourceText() ?? '';
+        if (text.startsWith('SWIFT_UNAVAILABLE')) {
+          found = true;
+        }
+      }
+    });
+    return found;
+  }
 }
 
 class PlatformAvailability {

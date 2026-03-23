@@ -84,9 +84,9 @@ extension CXSourceRangeExt on clang_types.CXSourceRange {
   String? readSourceText() {
     final ((file, startOffset), (_, endOffset)) = toTuple();
     try {
-      final source = File(file).readAsStringSync();
-      if (startOffset < source.length && endOffset <= source.length) {
-        return source.substring(startOffset, endOffset);
+      final bytes = File(file).readAsBytesSync();
+      if (startOffset < bytes.length && endOffset <= bytes.length) {
+        return String.fromCharCodes(bytes.sublist(startOffset, endOffset));
       }
     } catch (_) {}
     return null;
