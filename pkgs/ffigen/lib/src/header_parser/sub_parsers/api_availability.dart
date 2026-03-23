@@ -35,7 +35,6 @@ class ApiAvailability {
   static ApiAvailability fromCursor(
     clang_types.CXCursor cursor,
     Context context,
-    // { bool treatSwiftUnavailableAsUnavailable = false,}
   ) {
     final platformsLength = clang.clang_getCursorPlatformAvailability(
       cursor,
@@ -83,7 +82,8 @@ class ApiAvailability {
           macos = platformAvailability..name = 'macOS';
           break;
         case 'swift':
-          if (platformAvailability.unavailable) {
+          if (platformAvailability.unavailable &&
+              _hasSwiftUnavailableMacro(cursor)) {
             swiftIsUnavailable = true;
           }
           break;
@@ -111,16 +111,16 @@ class ApiAvailability {
   Availability _getAvailability(ExternalVersions? externalVersions) {
     if (alwaysUnavailable) return Availability.none;
 
+    if (alwaysDeprecated) {
+      return Availability.none;
+    }
+
     final macosVer = _normalizeVersions(externalVersions?.macos);
     final iosVer = _normalizeVersions(externalVersions?.ios);
 
     // If no versions are specified, everything is available.
     if (iosVer == null && macosVer == null) {
       return Availability.all;
-    }
-
-    if (alwaysDeprecated) {
-      return Availability.none;
     }
 
     Availability? availability_;
@@ -144,6 +144,19 @@ class ApiAvailability {
 
   static Availability _mergeAvailability(Availability? x, Availability y) =>
       x == null ? y : (x == y ? x : Availability.some);
+
+  static bool _hasSwiftUnavailableMacro(clang_types.CXCursor cursor) {
+    var found = false;
+    cursor.visitChildren((child) {
+      if (child.kind == 400) {
+        final text = child.extent.readSourceText() ?? '';
+        if (text.startsWith('SWIFT_UNAVAILABLE')) {
+          found = true;
+        }
+      }
+    });
+    return found;
+  }
 
   List<PlatformAvailability> get _platforms => [ios, macos].nonNulls.toList();
 
