@@ -33,7 +33,6 @@ class ApiAvailability {
     availability = _getAvailability(externalVersions);
   }
 
-
   static ApiAvailability fromCursor(
     clang_types.CXCursor cursor,
     Context context,
