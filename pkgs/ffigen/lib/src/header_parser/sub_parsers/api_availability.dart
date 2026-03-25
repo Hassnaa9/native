@@ -145,17 +145,13 @@ class ApiAvailability {
   static Availability _mergeAvailability(Availability? x, Availability y) =>
       x == null ? y : (x == y ? x : Availability.some);
 
-  static bool _hasSwiftUnavailableMacro(clang_types.CXCursor cursor) {
-    var found = false;
-    cursor.visitChildren((child) {
-      if (child.kind == 400) {
-        final text = child.extent.readSourceText() ?? '';
-        if (text.startsWith('SWIFT_UNAVAILABLE')) {
-          found = true;
-        }
-      }
-    });
-    return found;
+   static bool _hasSwiftUnavailableMacro(clang_types.CXCursor cursor) {
+    final attr = cursor.findChildWhere(
+      (child) =>
+          child.kind == clang_types.CXCursorKind.CXCursor_UnexposedAttr &&
+          (child.extent.readSourceText() ?? '').startsWith('SWIFT_UNAVAILABLE'),
+    );
+    return attr != null;
   }
 
   List<PlatformAvailability> get _platforms => [ios, macos].nonNulls.toList();
