@@ -154,9 +154,7 @@ class ApiAvailability {
     final attr = cursor.findChildWhere(
       (child) =>
           child.kind == clang_types.CXCursorKind.CXCursor_UnexposedAttr &&
-          _swiftUnavailableMacros.any(
-            (macro) => (child.extent.readSourceText() ?? '').startsWith(macro),
-          ),
+          _swiftUnavailableMacros.contains(child.extent.readSourceText()),
     );
     return attr != null;
   }
