@@ -84,14 +84,17 @@ class ApiAvailability {
           macos = platformAvailability..name = 'macOS';
           break;
         case 'swift':
-          if (platformAvailability.unavailable) swiftIsUnavailable = true;
+          if (platformAvailability.unavailable &&
+              _hasSwiftUnavailableMacro(cursor)) {
+            swiftIsUnavailable = true;
+          }
           break;
       }
     }
 
     final api = ApiAvailability(
       alwaysDeprecated: alwaysDeprecated.value != 0,
-      alwaysUnavailable: alwaysUnavailable.value != 0,
+      alwaysUnavailable: alwaysUnavailable.value != 0 || swiftIsUnavailable,
       ios: ios,
       macos: macos,
       swiftUnavailable: swiftIsUnavailable,
@@ -109,6 +112,8 @@ class ApiAvailability {
   }
 
   Availability _getAvailability(ExternalVersions? externalVersions) {
+    if (alwaysUnavailable) return Availability.none;
+
     final macosVer = _normalizeVersions(externalVersions?.macos);
     final iosVer = _normalizeVersions(externalVersions?.ios);
 
@@ -117,7 +122,7 @@ class ApiAvailability {
       return Availability.all;
     }
 
-    if (alwaysDeprecated || alwaysUnavailable) {
+    if (alwaysDeprecated) {
       return Availability.none;
     }
 
@@ -142,6 +147,25 @@ class ApiAvailability {
 
   static Availability _mergeAvailability(Availability? x, Availability y) =>
       x == null ? y : (x == y ? x : Availability.some);
+
+  static const _swiftUnavailableMacros = {
+    'SWIFT_UNAVAILABLE',
+    'SWIFT_UNAVAILABLE_MSG',
+  };
+
+  static String _extractMacroName(String? text) =>
+      RegExp(r'^\w+').firstMatch(text ?? '')?.group(0) ?? '';
+
+  static bool _hasSwiftUnavailableMacro(clang_types.CXCursor cursor) {
+    final attr = cursor.findChildWhere(
+      (child) =>
+          child.kind == clang_types.CXCursorKind.CXCursor_UnexposedAttr &&
+          _swiftUnavailableMacros.contains(
+            _extractMacroName(child.extent.readSourceText()),
+          ),
+    );
+    return attr != null;
+  }
 
   List<PlatformAvailability> get _platforms => [ios, macos].nonNulls.toList();
 
