@@ -845,6 +845,10 @@ int deprecatedFunction()'''),
         expect(
           trimmed,
           contains('''
+/// DeprecatedInterface
+///
+/// iOS: introduced 1.0.0, deprecated 2.0.0
+/// macOS: introduced 1.0.0, deprecated 2.0.0
 @Deprecated('test')
 extension type DeprecatedInterface'''),
         );
@@ -863,6 +867,10 @@ extension type DeprecatedInterface'''),
         expect(
           trimmed,
           contains('''
+/// DeprecatedProtocol
+///
+/// iOS: introduced 1.0.0, deprecated 2.0.0
+/// macOS: introduced 1.0.0, deprecated 2.0.0
 @Deprecated('test')
 extension type DeprecatedProtocol'''),
         );
@@ -1183,6 +1191,19 @@ const int deprecatedUnnamedEnum'''),
 '''),
         );
       });
+
+      test(
+        'API_DEPRECATED with different messages per platform combines them',
+        () {
+          final trimmed = bindings.split('\n').map((l) => l.trim()).join('\n');
+          expect(
+            trimmed,
+            contains(
+              "@Deprecated('iOS: Use newIosMethod, macOS: Use newMacMethod')",
+            ),
+          );
+        },
+      );
     });
   });
 }
