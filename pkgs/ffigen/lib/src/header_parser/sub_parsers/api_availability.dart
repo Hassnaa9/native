@@ -19,15 +19,14 @@ class ApiAvailability {
   final bool alwaysUnavailable;
   final PlatformAvailability? ios;
   final PlatformAvailability? macos;
-  final bool swiftUnavailable;
-  final String? deprecationMessage;
+  final String deprecationMessage;
 
   late final Availability availability;
 
   ApiAvailability({
     this.alwaysDeprecated = false,
     this.alwaysUnavailable = false,
-    this.deprecationMessage,
+    this.deprecationMessage = '',
     this.ios,
     this.macos,
     this.swiftUnavailable = false,
@@ -50,23 +49,19 @@ class ApiAvailability {
   }
 
   String get _effectiveDeprecationMessage {
-    if (deprecationMessage != null && deprecationMessage!.isNotEmpty) {
-      return deprecationMessage!;
-    }
-    final iosMsg = ios?.message;
-    final macosMsg = macos?.message;
-    final iosNonEmpty = iosMsg != null && iosMsg.isNotEmpty;
-    final macosNonEmpty = macosMsg != null && macosMsg.isNotEmpty;
+    if (deprecationMessage.isNotEmpty) return deprecationMessage;
+    final iosMsg = ios?.message ?? '';
+    final macosMsg = macos?.message ?? '';
+    final iosNonEmpty = iosMsg.isNotEmpty;
+    final macosNonEmpty = macosMsg.isNotEmpty;
     if (iosNonEmpty && macosNonEmpty) {
       if (iosMsg != macosMsg) {
         return 'iOS: $iosMsg, macOS: $macosMsg';
       }
       return iosMsg;
     }
-    final platformMsg = iosNonEmpty
-        ? iosMsg
-        : (macosNonEmpty ? macosMsg : null);
-    if (platformMsg != null) return platformMsg;
+    if (iosNonEmpty) return iosMsg;
+    if (macosNonEmpty) return macosMsg;
     return 'Deprecated';
   }
 
@@ -113,7 +108,7 @@ class ApiAvailability {
         deprecated: platform.Deprecated.triple,
         obsoleted: platform.Obsoleted.triple,
         unavailable: platform.Unavailable != 0,
-        message: msg.isEmpty ? null : msg,
+        message: msg,
       );
       switch (platform.Platform.string()) {
         case 'ios':
@@ -135,7 +130,7 @@ class ApiAvailability {
     final api = ApiAvailability(
       alwaysDeprecated: alwaysDeprecated.value != 0,
       alwaysUnavailable: alwaysUnavailable.value != 0 || swiftIsUnavailable,
-      deprecationMessage: deprecatedMsg.isEmpty ? null : deprecatedMsg,
+      deprecationMessage: deprecatedMsg,
       ios: ios,
       macos: macos,
       swiftUnavailable: swiftIsUnavailable,
@@ -242,7 +237,7 @@ class PlatformAvailability {
   Version? deprecated;
   Version? obsoleted;
   bool unavailable;
-  String? message;
+  String message;
 
   PlatformAvailability({
     this.name,
@@ -250,7 +245,7 @@ class PlatformAvailability {
     this.deprecated,
     this.obsoleted,
     this.unavailable = false,
-    this.message,
+    this.message = '',
   });
 
   @visibleForTesting
