@@ -17,6 +17,7 @@ enum Availability { none, some, all }
 class ApiAvailability {
   final bool alwaysDeprecated;
   final bool alwaysUnavailable;
+  final bool swiftUnavailable;
   final PlatformAvailability? ios;
   final PlatformAvailability? macos;
   final String deprecationMessage;
