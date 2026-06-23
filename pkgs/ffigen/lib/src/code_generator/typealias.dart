@@ -138,8 +138,15 @@ class Typealias extends BindingType {
       generateBindings ? name : type.getCType(context);
 
   @override
-  String getNativeType(Context context, {String varName = ''}) =>
-      type.getNativeType(context, varName: varName);
+  String getNativeType(
+    Context context, {
+    String varName = '',
+    bool generatingCppGlue = false,
+  }) => type.getNativeType(
+    context,
+    varName: varName,
+    generatingCppGlue: generatingCppGlue,
+  );
 
   @override
   String getFfiDartType(Context context) {
@@ -281,5 +288,9 @@ class ObjCInstanceType extends Typealias {
         );
 
   @override
-  String getNativeType(Context context, {String varName = ''}) => 'id $varName';
+  String getNativeType(
+    Context context, {
+    String varName = '',
+    bool generatingCppGlue = false,
+  }) => 'id $varName';
 }

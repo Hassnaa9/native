@@ -30,8 +30,17 @@ class PointerType extends Type {
       '${context.libs.prefix(ffiImport)}.Pointer<${child.getCType(context)}>';
 
   @override
-  String getNativeType(Context context, {String varName = ''}) =>
-      '${child.getNativeType(context)}* $varName';
+  String getNativeType(
+    Context context, {
+    String varName = '',
+    bool generatingCppGlue = false,
+  }) {
+    final nativeType = child.getNativeType(
+      context,
+      generatingCppGlue: generatingCppGlue,
+    );
+    return '$nativeType* $varName';
+  }
 
   // Both the C type and the FFI Dart type are 'Pointer<$cType>'.
   @override
@@ -78,8 +87,17 @@ class ConstantArray extends PointerType {
   bool get isIncompleteCompound => baseArrayType.isIncompleteCompound;
 
   @override
-  String getNativeType(Context context, {String varName = ''}) =>
-      '${child.getNativeType(context)} $varName[$length]';
+  String getNativeType(
+    Context context, {
+    String varName = '',
+    bool generatingCppGlue = false,
+  }) {
+    final nativeType = child.getNativeType(
+      context,
+      generatingCppGlue: generatingCppGlue,
+    );
+    return '$nativeType $varName[$length]';
+  }
 
   @override
   String toString() => '$child[$length]';
@@ -106,8 +124,17 @@ class IncompleteArray extends PointerType {
   Type get baseArrayType => child.baseArrayType;
 
   @override
-  String getNativeType(Context context, {String varName = ''}) =>
-      '${child.getNativeType(context)}* $varName';
+  String getNativeType(
+    Context context, {
+    String varName = '',
+    bool generatingCppGlue = false,
+  }) {
+    final nativeType = child.getNativeType(
+      context,
+      generatingCppGlue: generatingCppGlue,
+    );
+    return '$nativeType* $varName';
+  }
 
   @override
   String toString() => '$child[]';
@@ -129,7 +156,11 @@ class ObjCObjectPointer extends PointerType {
       '${context.libs.prefix(objcPkgImport)}.ObjCObject';
 
   @override
-  String getNativeType(Context context, {String varName = ''}) => 'id $varName';
+  String getNativeType(
+    Context context, {
+    String varName = '',
+    bool generatingCppGlue = false,
+  }) => 'id $varName';
 
   @override
   bool get sameDartAndCType => false;

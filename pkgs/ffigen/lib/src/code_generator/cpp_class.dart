@@ -240,8 +240,9 @@ class $name {
     if (methods.isEmpty) return null;
 
     final context = w.context;
-    String paramDecl(Parameter p) =>
-        p.type.getNativeType(context, varName: p.name).trim();
+    String paramDecl(Parameter p) => p.type
+        .getNativeType(context, varName: p.name, generatingCppGlue: true)
+        .trim();
 
     return '${methods.map((method) {
       final symbol = method.name.name;
@@ -260,7 +261,8 @@ class $name {
         params = '$originalName* self';
         body = 'delete self;';
       } else {
-        final nativeType = method.returnType.getNativeType(context);
+        final type = method.returnType;
+        final nativeType = type.getNativeType(context, generatingCppGlue: true);
         returnTypeString = nativeType.trim();
         final needsReturn = method.returnType != voidType;
         final returnPrefix = needsReturn ? 'return ' : '';
@@ -294,8 +296,11 @@ FFIGEN_EXPORT $returnTypeString $symbol($params) {
   String getCType(Context context) => name;
 
   @override
-  String getNativeType(Context context, {String varName = ''}) =>
-      varName.isEmpty ? originalName : '$originalName $varName';
+  String getNativeType(
+    Context context, {
+    String varName = '',
+    bool generatingCppGlue = false,
+  }) => varName.isEmpty ? originalName : '$originalName $varName';
 
   @override
   bool get sameFfiDartAndCType => true;

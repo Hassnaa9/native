@@ -77,11 +77,19 @@ class FunctionType extends Type with HasLocalScope {
       _getTypeImpl(writeArgumentNames, (Type t) => t.getDartType(context));
 
   @override
-  String getNativeType(Context context, {String varName = ''}) {
+  String getNativeType(
+    Context context, {
+    String varName = '',
+    bool generatingCppGlue = false,
+  }) {
     final arg = dartTypeParameters.map<String>(
-      (p) => p.type.getNativeType(context),
+      (p) =>
+          p.type.getNativeType(context, generatingCppGlue: generatingCppGlue),
     );
-    final returnTypeStr = returnType.getNativeType(context);
+    final returnTypeStr = returnType.getNativeType(
+      context,
+      generatingCppGlue: generatingCppGlue,
+    );
     return '$returnTypeStr (*$varName)(${arg.join(', ')})';
   }
 
@@ -175,8 +183,15 @@ class NativeFunc extends Type {
       getCType(context, writeArgumentNames: writeArgumentNames);
 
   @override
-  String getNativeType(Context context, {String varName = ''}) =>
-      _type.getNativeType(context, varName: varName);
+  String getNativeType(
+    Context context, {
+    String varName = '',
+    bool generatingCppGlue = false,
+  }) => _type.getNativeType(
+    context,
+    varName: varName,
+    generatingCppGlue: generatingCppGlue,
+  );
 
   @override
   bool get sameFfiDartAndCType => true;

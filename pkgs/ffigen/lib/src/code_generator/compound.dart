@@ -233,8 +233,11 @@ abstract class Compound extends BindingType with HasLocalScope {
   }
 
   @override
-  String getNativeType(Context context, {String varName = ''}) =>
-      '$nativeType $varName';
+  String getNativeType(
+    Context context, {
+    String varName = '',
+    bool generatingCppGlue = false,
+  }) => '$nativeType $varName';
 
   @override
   bool get sameFfiDartAndCType => true;
